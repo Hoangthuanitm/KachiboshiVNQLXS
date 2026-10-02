@@ -298,6 +298,7 @@ body.wide{--maxw:1180px}
 .dfil{display:grid}
 .dfil-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
 .dfil-row .fld{flex:0 1 190px}
+.dfil-row select{height:46px;border-radius:11px;border:1px solid var(--line);background:var(--surface);padding:0 10px;font-size:15.5px;font-weight:600;width:100%;min-width:0}
 .dfil-row input[type=month]{height:46px;border-radius:11px;border:1px solid var(--line);background:var(--surface);padding:0 12px;font-size:16px;font-weight:600}
 .dfil-foot{margin-top:12px;min-height:30px;display:flex;align-items:center}
 .fchip{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:14px}
@@ -457,6 +458,25 @@ select,input,textarea{max-width:100%}
   .kpis5{grid-template-columns:minmax(0,1fr)}
   .tbtn .nm{display:none}
 }
+
+/* ---------- ảnh ---------- */
+.phrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cam{min-height:44px;padding:0 12px;border-radius:10px;border:1.5px dashed var(--line);color:var(--accent);font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:6px;background:var(--surface)}
+.cam.need{border-color:var(--bad);color:var(--bad);background:var(--bad-bg)}
+.cam small{font-weight:600}
+.thumb{position:relative;width:56px;height:56px;border-radius:10px;overflow:hidden;background:var(--sunk);display:grid;place-items:center;flex:none;color:var(--muted);font-size:12px}
+.thumb img{width:100%;height:100%;object-fit:cover;cursor:pointer;display:block}
+.thumb button{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;background:rgb(0 0 0/.62);color:#fff;display:grid;place-items:center}
+.thumb button svg{width:12px;height:12px}
+.viewer{position:fixed;inset:0;z-index:50;background:rgb(0 0 0/.92);display:grid;place-items:center;padding:12px;cursor:zoom-out}
+.viewer img{max-width:100%;max-height:100%;border-radius:8px}
+@media (max-width:640px){
+  .badge{white-space:normal;text-align:left;line-height:1.3}
+  .actions{gap:8px} .actions > *{max-width:100%}
+  .dfil-row .fld{flex:1 1 calc(50% - 6px);min-width:0}
+  .dfil-row > span[style]{display:none}
+  .dfil-row .ghost{flex:1 1 auto;justify-content:center}
+}
 </style>
 <style>body{margin:0}</style>
 </head>
@@ -467,6 +487,7 @@ select,input,textarea{max-width:100%}
 <main id="app"></main>
 <div id="sheet"></div>
 <div id="tip" hidden></div>
+<input type="file" id="camfile" accept="image/*" capture="environment" hidden>
 <input type="file" id="impfile" accept=".json,application/json" hidden>
 
 <script>
@@ -490,6 +511,7 @@ const IC = {
   lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
   eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   logout:'<path d="M15 4h4v16h-4M10 17l5-5-5-5M15 12H3"/>', login:'<path d="M9 4H5v16h4M14 17l5-5-5-5M19 12H7"/>',
+  camera:'<path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/>',
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
   cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', copy:'<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h4"/>',
   trend:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>', pct:'<path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>'
@@ -643,6 +665,11 @@ const TX = {
       resetCat:"マスタを初期化",resetConfirm:"もう一度押すと初期化します",usedBy:"使用する点検表",lastAdmin:"管理者は最低1名必要です",idTaken:"このコードは使用中です"}
 };
 Object.assign(TX.vi,{
+  tooEarly:"Chưa đến giờ kiểm. Mở từ {t}.", opensAt:"Mở lúc {t}",
+  photo:"Chụp ảnh", photoReq:"bắt buộc", needPhoto:"Thiếu ảnh ở mục: {n}", needStopPhoto:"Máy hỏng: cần chụp ít nhất 1 ảnh", photoAfter:"Ảnh sau xử lý (nếu có)",
+  photoFull:"Bộ nhớ máy đã đầy, không lưu được ảnh. Báo Admin sao lưu và dọn dữ liệu.", photoBad:"Không đọc được ảnh, hãy chụp lại.", photoCol:"Bắt buộc ảnh",
+  openNGBlock:"Còn {n} mục NG chưa xử lý · chưa thể xác nhận", fixedBy:"Báo cáo xử lý",
+  rulesT:"Quy định giờ kiểm", rulesH:"Công nhân chỉ mở được phiếu trước giờ kiểm tối đa số phút dưới đây. Lưu phiếu sau giờ kiểm quá số phút cho phép thì tính là nhập trễ.", earlyL:"Mở trước giờ kiểm (phút)", lateL:"Tính trễ sau (phút)",
   overdueT:"Việc còn thiếu của các ngày trước", overdueSub:"Phải kiểm bù thì tổ trưởng mới xác nhận được ngày đó. Phiếu kiểm bù được ghi là nhập trễ.",
   confirmBlock:"Còn {n} lượt chưa kiểm · chưa thể xác nhận", waitWorker:"Chờ nhân viên kiểm ({n})",
   revTT:"Chờ bạn xác nhận", revAD:"Chờ Admin duyệt lần cuối", revNone:"Không có ngày nào đang chờ.", openConfirm:"Xem và xác nhận", waitLead:"Chờ tổ trưởng",
@@ -653,7 +680,7 @@ Object.assign(TX.vi,{
   stAssigned:"Được giao", stDone:"Đã kiểm", stNG:"NG", stLate:"Nhập trễ", stMiss:"Bỏ sót", stPending:"Chưa tới hạn", stStop:"Máy dừng", stOK:"Đạt",
   confirmDay:"Xác nhận ngày", confirmForce:"Còn {n} lượt chưa kiểm · bấm lần nữa để vẫn xác nhận", reopen:"Mở lại ngày", reopened:"Đã mở lại ngày",
   locked:"Ngày này đã được tổ trưởng xác nhận, không sửa được nữa.",
-  closeNG:"Khép lại NG", closeNote:"Biện pháp xử lý (bắt buộc)", closed:"Đã khép lại", closeNeed:"Ghi biện pháp xử lý trước", openNG:"Chưa khép lại",
+  closeNG:"Khép NG · Đã chỉnh lại", closeNote:"Báo cáo xử lý: nguyên nhân và biện pháp (bắt buộc)", closed:"Đã chỉnh lại", closeNeed:"Ghi báo cáo xử lý trước khi khép NG", openNG:"Chưa xử lý",
   result:"Kết quả", who:"Người kiểm", formF:"Phiếu",
   weekOf:"Tuần", copyTo:"Chép sang ngày khác", copyPick:"Chọn các ngày sẽ có phân công giống ngày {d}. Phân công cũ của các ngày đó sẽ bị thay.", copyApply:"Chép phân công",
   copyWeek:"T2 → T7 tuần này", copyNext:"T2 → T7 tuần sau", copied:"Đã chép phân công sang {n} ngày", pastRO:"Ngày đã qua · chỉ xem",
@@ -671,6 +698,11 @@ Object.assign(TX.vi,{
   times:"lần", legNone:"Không giao / chưa tới"
 });
 Object.assign(TX.jp,{
+  tooEarly:"まだ点検時刻ではありません。{t} から入力できます。", opensAt:"{t} から",
+  photo:"写真を撮る", photoReq:"必須", needPhoto:"写真が必要な項目: {n}", needStopPhoto:"故障時は写真が1枚以上必要です", photoAfter:"処置後の写真（任意）",
+  photoFull:"端末の保存容量が不足しています。管理者に連絡してください。", photoBad:"写真を読み込めません。撮り直してください。", photoCol:"写真必須",
+  openNGBlock:"未処置のNGが {n} 件 · まだ確認できません", fixedBy:"処置報告",
+  rulesT:"点検時刻のルール", rulesH:"作業者は点検時刻の指定分前からのみ入力できます。指定分を超えて保存すると「遅れ」になります。", earlyL:"点検時刻の何分前から (分)", lateL:"遅れ判定 (分)",
   overdueT:"前日までの未点検", overdueSub:"未点検を入力しないと班長は確認できません。後日入力は「遅れ」と記録されます。",
   confirmBlock:"未点検 {n} 件 · まだ確認できません", waitWorker:"作業者の点検待ち ({n})",
   revTT:"確認待ち", revAD:"管理者の最終承認待ち", revNone:"承認待ちの日はありません。", openConfirm:"確認する", waitLead:"班長の確認待ち",
@@ -681,7 +713,7 @@ Object.assign(TX.jp,{
   stAssigned:"割当", stDone:"点検済", stNG:"NG", stLate:"入力遅れ", stMiss:"未点検", stPending:"期限前", stStop:"停止", stOK:"合格",
   confirmDay:"日次確認", confirmForce:"未点検 {n} 件 · もう一度押すと確認", reopen:"確認を取消", reopened:"確認を取り消しました",
   locked:"この日は班長が確認済みのため修正できません。",
-  closeNG:"NGを処置済みにする", closeNote:"処置内容（必須）", closed:"処置済", closeNeed:"処置内容を入力してください", openNG:"未処置",
+  closeNG:"NGを処置済みにする", closeNote:"処置内容（必須）", closed:"調整済", closeNeed:"処置内容を入力してください", openNG:"未処置",
   result:"結果", who:"点検者", formF:"点検表",
   weekOf:"週", copyTo:"他の日にコピー", copyPick:"{d} と同じ割当にする日を選択。既存の割当は上書きされます。", copyApply:"コピー",
   copyWeek:"今週 月→土", copyNext:"来週 月→土", copied:"{n} 日にコピーしました", pastRO:"過去の日 · 閲覧のみ",
@@ -745,7 +777,7 @@ const store = {
     }catch(e){}
   },
   lsGet(k,def){ try{ const v=localStorage.getItem(k); if(v!=null) return JSON.parse(v); }catch(e){} return this.mem[k] ?? def; },
-  lsSet(k,v){ this.mem[k]=v; try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
+  lsSet(k,v){ this.mem[k]=v; try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ return !(e && /quota/i.test((e.name||"")+(e.message||""))); } },
   stop(key){ if(this.subs[key]){ this.subs[key](); delete this.subs[key]; } },
   stopAll(){ Object.keys(this.subs).forEach(k=>this.stop(k)); },
   watchByDate(col, date, cb){
@@ -771,7 +803,7 @@ const store = {
   },
   async setDoc(col,id,data){
     if(this.mode==="db") await this.db.collection(col).doc(id).set(data);
-    else { const all=this.lsGet("qc_"+col,{}); all[id]=data; this.lsSet("qc_"+col,all); }
+    else { const all=this.lsGet("qc_"+col,{}); all[id]=data; if(!this.lsSet("qc_"+col,all)){ delete all[id]; this.lsSet("qc_"+col,all); throw {code:"quota"}; } }
   },
   async getDoc(col,id){
     if(this.mode==="db"){ const s=await this.db.collection(col).doc(id).get(); return s.exists?s.data():null; }
@@ -809,7 +841,7 @@ async function offerFile(name, text, mime){
 const S = { view:"login", tab:"input", me:null, master:mergeMaster(null), recs:{}, assign:{}, appr:{}, trendRows:[], trendFor:"",
   date:todayStr(), sumDate:todayStr(), aDate:todayStr(), aDept:null, draft:null, sheet:null, err:"",
   rev:null, cDate:todayStr(), cDept:null, cArm:false, apprWeek:{}, aWeekDocs:{}, dFrom:todayStr().slice(0,7), dTo:todayStr().slice(0,7), dForm:"all", dFilt:null, dData:null, dKey:"", dLoading:false,
-  cat:"employees", catQ:"", formSel:"KK", resetArm:false, clearArm:false, authSet:new Set(), login:{id:"",err:"",fails:0,until:0}, pwForced:false };
+  cat:"employees", catQ:"", formSel:"KK", resetArm:false, clearArm:false, authSet:new Set(), newPh:{}, delPh:[], camTag:"", closePh:[], closeNote:"", login:{id:"",err:"",fails:0,until:0}, pwForced:false };
 
 const FM = f => S.master.forms[f];
 const MC = id => S.master.machines.find(m=>m.id===id) || {vi:id,jp:id};
@@ -925,8 +957,8 @@ function slotState(f,m,i,date){
   if(date<todayStr()) return {cls:"late", txt:t("missing"), sub:st};
   if(date>todayStr()) return {cls:"wait", txt:t("wait"), sub:st};
   const now = new Date(); const nm = now.getHours()*60+now.getMinutes();
-  if(nm > toMin(st)+30) return {cls:"late", txt:t("late"), sub:st};
-  if(nm >= toMin(st)-60) return {cls:"todo", txt:t("todo"), sub:st};
+  if(nm > toMin(st)+lateMin()) return {cls:"late", txt:t("late"), sub:st};
+  if(nm >= toMin(st)-earlyMin()) return {cls:"todo", txt:t("todo"), sub:st};
   return {cls:"wait", txt:t("wait"), sub:st};
 }
 
@@ -1041,6 +1073,40 @@ function vTasks(e){
   return h+review;
 }
 
+/* ---------- ảnh ---------- */
+const PH = {};
+const needPhoto = it => it.photo===undefined ? !!it.meas : !!it.photo;
+const recPhotos = r => { let n=(r.stopPhotos||[]).length+((r.close&&r.close.photos)||[]).length; Object.values(r.items||{}).forEach(v=>n+=(v.photos||[]).length); return n; };
+function thumbs(ids, tag){
+  return (ids||[]).map(id=>`<span class="thumb">${PH[id]?`<img src="${PH[id]}" alt="" data-act="viewPhoto" data-id="${esc(id)}">`:(id in PH?"?":`<span data-ph="${esc(id)}">…</span>`)}${tag?`<button data-act="delPhoto" data-id="${esc(id)}" data-tag="${esc(tag)}" aria-label="Xoá ảnh">${ico("x")}</button>`:""}</span>`).join("");
+}
+function hydratePhotos(){
+  const ids=[...new Set([...document.querySelectorAll("[data-ph]")].map(x=>x.dataset.ph))].filter(id=>!(id in PH));
+  if(!ids.length) return;
+  Promise.all(ids.map(async id=>{ try{ const d=await store.getDoc("photos",id); PH[id]=d&&d.data?d.data:""; }catch(e){ PH[id]=""; } })).then(()=>{ if(S.view==="form") render(); else renderSheet(); });
+}
+function compressPhoto(file, cap){
+  return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file), im=new Image();
+    im.onload=()=>{ try{
+      const k=Math.min(1,900/Math.max(im.width,im.height)), w=Math.max(1,Math.round(im.width*k)), h=Math.max(1,Math.round(im.height*k));
+      const c=document.createElement("canvas"); c.width=w; c.height=h; const g=c.getContext("2d"); g.drawImage(im,0,0,w,h);
+      const fs=Math.max(13,Math.round(w/36)); g.font=`600 ${fs}px sans-serif`;
+      g.fillStyle="rgba(0,0,0,.6)"; g.fillRect(0,h-fs*1.9,Math.min(w,g.measureText(cap).width+fs*1.2),fs*1.9);
+      g.fillStyle="#fff"; g.fillText(cap,fs*.6,h-fs*.6);
+      URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg",.6));
+    }catch(e){ rej(e); } };
+    im.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error("img")); };
+    im.src=url;
+  });
+}
+async function writePhotos(ids, rec){
+  const e=meEmp();
+  for(const id of ids){ if(!S.newPh[id]) continue; await store.setDoc("photos", id, {date:rec.date, rec:rec.id, by:e.id, at:new Date().toISOString(), data:PH[id]}); delete S.newPh[id]; }
+  for(const id of S.delPh.splice(0)){ try{ await store.delDoc("photos", id); }catch(x){} }
+}
+const camBtn = (tag, req, has) => `<button class="cam ${req&&!has?"need":""}" data-act="cam" data-tag="${esc(tag)}">${ico("camera")}${t("photo")}${req?` <small>(${t("photoReq")})</small>`:""}</button>`;
+
 /* ---------- phiếu nhập ---------- */
 const blankItem = F => F.pos ? {pos:{T:"OK",G:"OK",P:"OK"},chips:[],note:""} : {r:"OK",chips:[],note:"",meas:""};
 function newDraft(f,m,s){
@@ -1070,7 +1136,8 @@ function vForm(){
     <button class="st-off" aria-pressed="${d.status==="off"}" data-act="status" data-v="off">${t("off")}</button></div>`;
   if(d.status!=="run"){
     h += `<p class="muted" style="margin:14px 2px">${t("stopNote")}</p>
-      <textarea id="stopnote" class="note" data-in="stopnote" placeholder="${esc(t("note"))}">${esc(d.stopNote||"")}</textarea>`;
+      <textarea id="stopnote" class="note" data-in="stopnote" placeholder="${esc(t("note"))}">${esc(d.stopNote||"")}</textarea>
+      <div class="phrow" style="margin-top:10px">${camBtn("stop", d.status==="broken", (d.stopPhotos||[]).length)}${thumbs(d.stopPhotos,"stop")}</div>`;
   } else {
     if(F.product){
       const need = S.err && !d.product && F.product==="req";
@@ -1085,6 +1152,7 @@ function vForm(){
       h += `</div>`;
       if(F.pos) h += `<div class="pos">`+["T","G","P"].map(p=>`<button data-act="pos" data-c="${it.c}" data-p="${p}" data-v="${v.pos[p]}" aria-label="${esc(L(POSN[p]))} ${v.pos[p]}">${v.pos[p]==="OK"?ico("check"):ico("x")}<small>${esc(L(POSN[p]))}</small></button>`).join("")+`</div>`;
       if(it.meas) h += `<label class="meas">${ico("therm")}${t("meas")}<input id="m-${it.c}" data-in="meas" data-c="${it.c}" value="${esc(v.meas)}" placeholder="75/100"></label>`;
+      h += `<div class="phrow">${camBtn("item:"+it.c, x||needPhoto(it), (v.photos||[]).length)}${thumbs(v.photos,"item:"+it.c)}</div>`;
       if(x){
         const nt = notifyFor(d.form);
         const chips = F.chips==="err" ? errsFor(d.form) : ACTS;
@@ -1121,7 +1189,7 @@ function productList(){
 const closeBtn = () => `<button class="x-btn" data-act="closeSheet" aria-label="${t("close")}">${ico("x")}</button>`;
 function renderSheet(){
   const sh = S.sheet;
-  if(!sh){ sheetEl.innerHTML=""; return; }
+  if(!sh){ sheetEl.innerHTML=""; hydratePhotos(); return; }
   let h = `<div class="scrim" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" data-stop="1">`;
   if(sh.type==="product"){
     h += `<div class="sheet-h"><b>${ico("box")}${t("product")}</b>${closeBtn()}</div>
@@ -1157,6 +1225,7 @@ function renderSheet(){
   }
   h += `</div></div>`;
   sheetEl.innerHTML = h;
+  hydratePhotos();
 }
 
 function vDetail(r){
@@ -1165,7 +1234,7 @@ function vDetail(r){
     <div class="muted">${esc(L(F))} · ${showDate(r.date)} ${esc(r.time)} · ${esc(r.workerName)}${r.editedAt?" · ✎":""}</div>`;
   if(r.product) h += `<div><b>${t("product")}:</b> ${esc(r.product)}</div>`;
   if(r.status!=="run"){
-    h += `<div><span class="badge b-stop">${t(r.status)}</span> ${esc(r.stopNote||"")}</div>`;
+    h += `<div><span class="badge b-stop">${t(r.status)}</span> ${esc(r.stopNote||"")}</div>${(r.stopPhotos||[]).length?`<div class="phrow">${thumbs(r.stopPhotos)}</div>`:""}`;
   } else {
     h += `<div class="tbl-wrap"><table class="ptable"><tbody>`;
     F.items.filter(it=>r.items[it.c]).forEach(it=>{
@@ -1173,14 +1242,14 @@ function vDetail(r){
       const res = F.pos ? ["T","G","P"].map(p=>`${esc(L(POSN[p]))} ${v.pos?.[p]==="X"?'<span class="badge b-bad">X</span>':'<span class="badge b-ok">✓</span>'}`).join(" ")
                         : (v.r==="X"?'<span class="badge b-bad">X</span>':'<span class="badge b-ok">'+t("OK")+'</span>');
       const extra = [v.meas, chipNames(r.form,v.chips), v.note].filter(Boolean).map(esc).join(" · ");
-      h += `<tr><td><b>${esc(L(it))}</b>${extra?`<div class="muted" style="font-size:13px">${extra}</div>`:""}</td><td style="text-align:right;white-space:nowrap">${res}</td></tr>`;
+      h += `<tr><td><b>${esc(L(it))}</b>${extra?`<div class="muted" style="font-size:13px">${extra}</div>`:""}${(v.photos||[]).length?`<div class="phrow" style="margin-top:6px">${thumbs(v.photos)}</div>`:""}</td><td style="text-align:right;white-space:nowrap">${res}</td></tr>`;
     });
     h += `</tbody></table></div>`;
     if(r.loai2?.length) h += `<div><b>${t("l2")}:</b> `+r.loai2.map(x=>`${esc(L(S.master.errors.find(e=>e.id===x.err))||x.err)} ${x.doi} ${t("pair")}`).join(", ")+`</div>`;
   }
   if(r.result==="X"){
-    if(r.close) h += `<div class="closebox" style="background:var(--ok-bg)"><b style="color:var(--ok);display:flex;gap:6px;align-items:center">${ico("check")}${t("closed")} · ${esc(r.close.name)} · ${esc(r.close.time)}</b><span>${esc(r.close.note)}</span></div>`;
-    else if(canClose(meEmp(),r)) h += `<div class="closebox"><b style="color:var(--bad)">${t("openNG")}</b><textarea id="closeNote" placeholder="${esc(t("closeNote"))}"></textarea><button class="primary" data-act="closeNG" data-id="${esc(r.id)}">${ico("check")}${t("closeNG")}</button></div>`;
+    if(r.close) h += `<div class="closebox" style="background:var(--ok-bg)"><b style="color:var(--ok);display:flex;gap:6px;align-items:center">${ico("check")}${t("closed")} · ${esc(r.close.name)} · ${esc(r.close.time)}</b><span><b>${t("fixedBy")}:</b> ${esc(r.close.note)}</span>${(r.close.photos||[]).length?`<div class="phrow">${thumbs(r.close.photos)}</div>`:""}</div>`;
+    else if(canClose(meEmp(),r)) h += `<div class="closebox"><b style="color:var(--bad)">${t("openNG")}</b><textarea id="closeNote" data-in="closenote" placeholder="${esc(t("closeNote"))}">${esc(S.closeNote)}</textarea><div class="phrow">${camBtn("close",false,S.closePh.length).replace(t("photo"),t("photoAfter"))}${thumbs(S.closePh,"close")}</div><button class="primary" data-act="closeNG" data-id="${esc(r.id)}">${ico("check")}${t("closeNG")}</button></div>`;
     else h += `<span class="badge b-bad">${t("openNG")}</span>`;
   }
   return h;
@@ -1254,9 +1323,13 @@ async function saveAssign(dept, map, date){
 }
 
 /* ---------- kết quả một lượt kiểm ---------- */
-const GRACE = 30;
+const lateMin = () => { const v=+S.master.lateMin; return v>=0 ? v : 30; };
+const earlyMin = () => { const v=+S.master.earlyMin; return v>=0 ? v : 15; };
+const fmtMin = m => pad(Math.floor(Math.max(0,m)/60))+":"+pad(Math.max(0,m)%60);
+const opensAt = (f,i) => toMin(FM(f).slots[i]?.t) - earlyMin();
+const tooEarly = (date,f,i) => { if(date!==todayStr()) return false; const n=new Date(); return n.getHours()*60+n.getMinutes() < opensAt(f,i); };
 function outcome(date,f,i,rec){
-  const due = toMin(FM(f).slots[i]?.t)+GRACE;
+  const due = toMin(FM(f).slots[i]?.t)+lateMin();
   if(rec){
     if(rec.result==="STOP") return {st:"stop", late:false};
     const late = (rec.savedDay && rec.savedDay > rec.date) || toMin(rec.time) > due;
@@ -1316,8 +1389,9 @@ function vConfirm(e){
       ${(!S.appr[date+"_FINAL"] && (appr.by===e.id||isAD(e)))?`<button class="ghost" data-act="cReopen">${ico("upload")}${t("reopen")}</button>`:""}`;
   } else {
     const left = c.miss + c.pending;
+    if(!left && c.open) h += `<span class="badge b-bad" style="font-size:14.5px;padding:10px 14px">${ico("lock")}${fill(t("openNGBlock"),{n:c.open})}</span>`;
     if(left) h += `<span class="badge b-warn" style="font-size:14.5px;padding:10px 14px;white-space:normal">${ico("lock")}${fill(t("confirmBlock"),{n:left})}</span>`;
-    else if(rows.length) h += `<button class="primary" style="min-height:52px;font-size:16.5px" data-act="cApprove">${ico("check")}${t("confirmDay")} ${shortDate(date)}</button>`;
+    else if(rows.length && !c.open) h += `<button class="primary" style="min-height:52px;font-size:16.5px" data-act="cApprove">${ico("check")}${t("confirmDay")} ${shortDate(date)}</button>`;
   }
   h += `</div></div>`;
   if(!rows.length) return h+`<div class="empty">${t("noPeople")}</div>`;
@@ -1325,7 +1399,7 @@ function vConfirm(e){
   rows.sort((a,b)=>(FORM_ORDER.indexOf(a.f)-FORM_ORDER.indexOf(b.f))||a.m.localeCompare(b.m)||a.i-b.i).forEach(r=>{
     const who = emp(r.who);
     h += `<tr ${r.rec?`data-act="detail" data-id="${esc(r.rec.id)}" style="cursor:pointer"`:""}><td>${formIcon(r.f,26)}</td><td><b>${esc(L(MC(r.m)))}</b></td><td class="muted">${esc(slotLabel(r.f,r.i))} · ${FM(r.f).slots[r.i].t}</td>
-      <td>${who?`<span class="who">${avatar(who)}${esc(who.name)}</span>`:"—"}</td><td><span style="display:flex;gap:6px;flex-wrap:wrap">${stateBadge(r,r.rec)}</span></td>
+      <td>${who?`<span class="who">${avatar(who)}${esc(who.name)}</span>`:"—"}</td><td><span style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${stateBadge(r,r.rec)}${r.rec&&recPhotos(r.rec)?`<span class="badge b-wait">${ico("camera")}${recPhotos(r.rec)}</span>`:""}</span></td>
       <td>${r.st==="ng"?(r.rec.close?`<span class="badge b-ok">${ico("check")}${t("closed")}</span>`:`<span class="badge b-bad">${t("openNG")}</span>`):""}</td></tr>`;
   });
   return h+`</tbody></table></div></div>`;
@@ -1344,6 +1418,7 @@ async function rangeMonths(col, fromYm, toYm){
   for(let ym=fromYm; ym<=toYm; ym=addMonths(ym,1)) out = out.concat(await store.range(col, monthStart(ym), monthEnd(ym)));
   return out;
 }
+function monthOpts(sel){ const m0=todayStr().slice(0,7); let o=""; for(let k=0;k<24;k++){ const ym=addMonths(m0,-k); o+=`<option value="${ym}" ${ym===sel?"selected":""}>${ym.slice(5)}/${ym.slice(0,4)}</option>`; } if(sel<addMonths(m0,-23)) o+=`<option value="${sel}" selected>${sel.slice(5)}/${sel.slice(0,4)}</option>`; return o; }
 function dashForms(e){ const fs = scopeForms(e); return S.dForm==="all" || !fs.includes(S.dForm) ? fs : [S.dForm]; }
 function prevRange(){ const n=monthsLen(S.dFrom,S.dTo); return [addMonths(S.dFrom,-n), addMonths(S.dFrom,-1)]; }
 async function loadDash(){
@@ -1475,8 +1550,8 @@ function vDash(e){
   /* bộ lọc */
   const preset = S.dFrom===thisM&&S.dTo===thisM ? "this" : S.dFrom===addMonths(thisM,-2)&&S.dTo===thisM ? "3" : S.dFrom===thisM.slice(0,4)+"-01"&&S.dTo===thisM ? "ytd" : "";
   h += `<div class="card dfil"><div class="dfil-row">
-      <label class="fld"><span>${t("fromM")}</span><input type="month" id="dFrom" value="${S.dFrom}" max="${thisM}"></label>
-      <label class="fld"><span>${t("toM")}</span><input type="month" id="dTo" value="${S.dTo}" max="${thisM}"></label>
+      <label class="fld"><span>${t("fromM")}</span><select id="dFrom">${monthOpts(S.dFrom)}</select></label>
+      <label class="fld"><span>${t("toM")}</span><select id="dTo">${monthOpts(S.dTo)}</select></label>
       <div class="mchips"><button class="mchip" aria-pressed="${preset==="this"}" data-act="dPreset" data-v="this">${t("pThis")}</button><button class="mchip" aria-pressed="${preset==="3"}" data-act="dPreset" data-v="3">${t("p3")}</button><button class="mchip" aria-pressed="${preset==="ytd"}" data-act="dPreset" data-v="ytd">${t("pYtd")}</button></div>
       <span style="flex:1"></span><button class="ghost" data-act="dRefresh">${ico("trend")}${t("refresh")}</button><button class="ghost" data-act="export">${ico("download")}CSV</button></div>
     ${scope.length>1?`<div class="label" style="margin:14px 2px 8px">${t("formF")}</div><div class="mchips"><button class="mchip" aria-pressed="${S.dForm==="all"}" data-act="dForm" data-v="all">${t("allForms")}</button>`+scope.map(f=>`<button class="mchip" aria-pressed="${S.dForm===f}" data-act="dForm" data-v="${f}">${esc(L(FM(f)))}</button>`).join("")+`</div>`:""}
@@ -1612,15 +1687,18 @@ function vCatForms(){
   h += `<div class="label">${t("formMachines")}</div><div class="mchips">`+
     S.master.machines.filter(m=>m.active).map(m=>`<button class="mchip" aria-pressed="${F.machines.includes(m.id)}" data-act="formMach" data-v="${m.id}">${esc(L(m))}</button>`).join("")+`</div>`;
   h += `<div class="label">${t("formSlots")}</div><div class="mchips">`+F.slots.map((s,i)=>`<label class="fld" style="flex:none;min-width:130px"><span>${esc(slotLabel(f,i))}</span><input type="time" data-slot="${i}" value="${esc(s.t)}"></label>`).join("")+`</div>`;
-  h += `<div class="label">${t("formItems")}</div><div class="tbl-wrap"><table class="cat"><thead><tr><th>${t("nameVi")}</th><th>${t("nameJp")}</th>${F.pos?"":`<th>${t("hasMeas")}</th>`}<th>${t("active")}</th></tr></thead><tbody>`+
+  h += `<div class="label">${t("formItems")}</div><div class="tbl-wrap"><table class="cat"><thead><tr><th>${t("nameVi")}</th><th>${t("nameJp")}</th>${F.pos?"":`<th>${t("hasMeas")}</th>`}<th>${t("photoCol")}</th><th>${t("active")}</th></tr></thead><tbody>`+
     F.items.map((it,i)=>`<tr class="${it.active===false?"off":""}"><td><input class="ed" data-fitem="vi" data-i="${i}" value="${esc(it.vi)}" style="min-width:170px"></td><td><input class="ed" data-fitem="jp" data-i="${i}" value="${esc(it.jp)}" style="min-width:140px"></td>
       ${F.pos?"":`<td><button class="sw" role="switch" aria-checked="${!!it.meas}" data-act="itemMeas" data-i="${i}" aria-label="${t("hasMeas")}"></button></td>`}
+      <td><button class="sw" role="switch" aria-checked="${needPhoto(it)}" data-act="itemPhoto" data-i="${i}" aria-label="${t("photoCol")}"></button></td>
       <td><button class="sw" role="switch" aria-checked="${it.active!==false}" data-act="itemToggle" data-i="${i}" aria-label="${t("active")}"></button></td></tr>`).join("")+`</tbody></table></div>
     <div class="addbox" style="margin-top:12px"><label class="fld" style="flex:2"><span>${t("nameVi")}</span><input id="i_vi"></label><label class="fld" style="flex:2"><span>${t("nameJp")}</span><input id="i_jp"></label><button class="primary" data-act="addItem">${ico("plus")}${t("addNew")}</button></div>`;
   return h;
 }
 function vCatSettings(){
   return `<div class="stack" style="gap:18px">
+    <div class="setblock"><b>${t("rulesT")}</b><p class="muted" style="margin:4px 0 10px;font-size:14px">${t("rulesH")}</p>
+      <div class="addbox" style="margin:0"><label class="fld"><span>${t("earlyL")}</span><input type="number" min="0" max="240" inputmode="numeric" data-rule="earlyMin" value="${earlyMin()}"></label><label class="fld"><span>${t("lateL")}</span><input type="number" min="0" max="240" inputmode="numeric" data-rule="lateMin" value="${lateMin()}"></label></div></div>
     <div class="setblock"><b>${t("backupTitle")}</b><p class="muted" style="margin:4px 0 10px;font-size:14px">${t("backupHelp")}</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="primary" data-act="backup">${ico("download")}${t("backup")}</button><button class="ghost" data-act="restore">${ico("upload")}${t("restore")}</button></div></div>
     <div class="setblock"><b>${t("resetTitle")}</b><p class="muted" style="margin:4px 0 10px;font-size:14px">${t("resetHelp")}</p>
@@ -1767,6 +1845,7 @@ document.addEventListener("click", async ev=>{
     case "cApprove": {
       const rows=confirmRows(S.cDept,S.cDate); const left=rows.filter(r=>r.st==="miss"||r.st==="pending").length;
       if(left || !rows.length){ toastErr(fill(t("confirmBlock"),{n:left})); return; }
+      const openNG=rows.filter(r=>r.st==="ng" && !r.rec.close).length; if(openNG){ toastErr(fill(t("openNGBlock"),{n:openNG})); return; }
       const n=new Date();
       const data={date:S.cDate,dept:S.cDept,by:e.id,name:e.name,time:hm(n)+" "+shortDate(todayStr()),at:n.toISOString(),done:rows.filter(r=>r.rec).length,total:rows.length};
       try{ await store.setDoc("approvals", S.cDate+"_"+S.cDept, data); S.appr[S.cDate+"_"+S.cDept]=data; S.apprWeek[S.cDate+"_"+S.cDept]=data; toast(t("approved")); render(); }catch(err){ toastErr(t("saveErr")); }
@@ -1775,23 +1854,32 @@ document.addEventListener("click", async ev=>{
     case "closeNG": {
       const r=findRec(b.dataset.id); const note=(document.getElementById("closeNote")?.value||"").trim();
       if(!r) return; if(!note){ toastErr(t("closeNeed")); return; }
-      const n=new Date(); const rec={...r, close:{by:e.id,name:e.name,note,at:n.toISOString(),time:hm(n)+" "+shortDate(todayStr())}}; delete rec._id;
-      try{ await store.setDoc("checks", rec.id, rec); patchRec(rec); S.sheet={type:"detail",rec}; toast(t("closed")); render(); }catch(err){ toastErr(t("saveErr")); }
+      const n=new Date(); const rec={...r, close:{by:e.id,name:e.name,note,photos:[...S.closePh],at:n.toISOString(),time:hm(n)+" "+shortDate(todayStr())}}; delete rec._id;
+      try{ await writePhotos(S.closePh, rec); await store.setDoc("checks", rec.id, rec); patchRec(rec); if(S.rev && S.rev.checks[rec.id]) S.rev.checks[rec.id]=rec; S.closePh=[]; S.closeNote=""; S.sheet={type:"detail",rec}; toast(t("closed")); render(); }catch(err){ toastErr(t("saveErr")); }
       break; }
     case "dPreset": { const m=todayStr().slice(0,7); S.dTo=m; S.dFrom = b.dataset.v==="this"?m : b.dataset.v==="3"?addMonths(m,-2) : m.slice(0,4)+"-01"; S.dFilt=null; loadDash(); break; }
     case "dForm": S.dForm=b.dataset.v; S.dFilt=null; render(); break;
     case "dRefresh": loadDash(); break;
     case "filt": { const f={t:b.dataset.t,v:b.dataset.v,l:b.dataset.l}; S.dFilt = (S.dFilt&&S.dFilt.t===f.t&&S.dFilt.v===f.v) ? null : f; tip.hidden=true; render(); break; }
     case "filtClear": S.dFilt=null; render(); break;
+    case "cam": S.camTag=b.dataset.tag; document.getElementById("camfile").click(); break;
+    case "delPhoto": {
+      const id=b.dataset.id, tag=b.dataset.tag; const drop=a=>{ const i=(a||[]).indexOf(id); if(i>=0) a.splice(i,1); };
+      if(tag==="close") drop(S.closePh); else if(tag==="stop") drop(d.stopPhotos); else drop(d.items[tag.slice(5)].photos);
+      if(S.newPh[id]) delete S.newPh[id]; else S.delPh.push(id);
+      if(tag==="close") renderSheet(); else render(); break; }
+    case "viewPhoto": { ev.stopPropagation(); const v=document.createElement("div"); v.className="viewer"; const im=document.createElement("img"); im.src=PH[b.dataset.id]||""; im.alt=""; v.appendChild(im); v.addEventListener("click",()=>v.remove()); document.body.appendChild(v); break; }
+    case "itemPhoto": { const m=clone(S.master); const it=m.forms[S.formSel].items[+b.dataset.i]; it.photo=!needPhoto(it); await saveMaster(m); break; }
     case "open": {
       S.date=b.dataset.d||todayStr();
       const f=b.dataset.f, m=b.dataset.m, s=+b.dataset.s, ex=recOn(S.date,f,m,s);
       if(assignedOn(S.date,f,m,s)!==e.id) return;
       if(ex && ex.worker!==e.id){ S.sheet={type:"detail",rec:ex}; renderSheet(); toastErr(t("notMine")); return; }
+      if(!ex && tooEarly(S.date,f,s)){ toastErr(fill(t("tooEarly"),{t:fmtMin(opensAt(f,s))})); return; }
       if(apprOn(S.date,deptOfForm(f))){ if(ex){ S.sheet={type:"detail",rec:ex}; renderSheet(); } toastErr(t("locked")); return; }
       S.draft=newDraft(f,m,s); S.view="form"; S.err=""; render(); window.scrollTo(0,0); break; }
     case "back": goMain(); break;
-    case "slot": { const keep=d.product; S.draft=newDraft(d.form,d.machine,+b.dataset.v); if(!S.draft.product) S.draft.product=keep; render(); break; }
+    case "slot": { if(!recOn(d.date,d.form,d.machine,+b.dataset.v) && tooEarly(d.date,d.form,+b.dataset.v)){ toastErr(fill(t("tooEarly"),{t:fmtMin(opensAt(d.form,+b.dataset.v))})); return; } const keep=d.product; S.draft=newDraft(d.form,d.machine,+b.dataset.v); if(!S.draft.product) S.draft.product=keep; render(); break; }
     case "status": d.status=b.dataset.v; S.err=""; render(); break;
     case "okx": { const v=d.items[b.dataset.c]; v.r=b.dataset.v; if(v.r==="OK"){v.chips=[];v.note="";} S.err=""; render(); break; }
     case "pos": { const v=d.items[b.dataset.c]; v.pos[b.dataset.p]= v.pos[b.dataset.p]==="OK"?"X":"OK"; if(!Object.values(v.pos).includes("X")){v.chips=[];v.note="";} S.err=""; render(); break; }
@@ -1806,7 +1894,7 @@ document.addEventListener("click", async ev=>{
     case "delL2": d.loai2.splice(+b.dataset.i,1); render(); break;
     case "closeSheet": S.sheet=null; renderSheet(); break;
     case "save": await doSave(); break;
-    case "detail": { const r=findRec(b.dataset.id); if(r){ tip.hidden=true; S.sheet={type:"detail",rec:r}; renderSheet(); } break; }
+    case "detail": { const r=findRec(b.dataset.id); if(r){ S.closePh=[]; S.closeNote=""; tip.hidden=true; S.sheet={type:"detail",rec:r}; renderSheet(); } break; }
     case "export": await doExport(); break;
     /* quản trị */
     case "cat": S.cat=b.dataset.v; S.catQ=""; S.resetArm=false; render(); break;
@@ -1860,6 +1948,9 @@ document.addEventListener("change", async ev=>{
     if(S.dFrom>S.dTo){ if(el.id==="dFrom") S.dTo=S.dFrom; else S.dFrom=S.dTo; }
     S.dFilt=null; el.blur(); loadDash(); return;
   }
+  if(el.dataset.rule){
+    const v=Math.max(0,Math.min(240,Math.round(+el.value||0))); const m=clone(S.master); m[el.dataset.rule]=v; el.blur(); await saveMaster(m,t("saved")); return;
+  }
   if(el.dataset.assign){
     const dept=S.aDept, map={...((S.assign[S.aDate+"_"+dept]||S.aWeekDocs[S.aDate+"_"+dept]||{}).map||{})};
     if(el.value) map[el.dataset.assign]=el.value; else delete map[el.dataset.assign];
@@ -1877,6 +1968,16 @@ document.addEventListener("change", async ev=>{
   } else if(el.dataset.slot){
     if(!el.value) return;
     const m=clone(S.master); m.forms[S.formSel].slots[+el.dataset.slot].t=el.value; el.blur(); await saveMaster(m);
+  } else if(el.id==="camfile" && el.files[0]){
+    const file=el.files[0], tag=S.camTag, d=S.draft, e=meEmp(), n=new Date(); el.value="";
+    try{
+      const ctx = tag==="close" ? (S.sheet&&S.sheet.rec) : d; if(!ctx) return;
+      const data = await compressPhoto(file, `${showDate(todayStr())} ${hm(n)} · ${e.name} · ${MC(ctx.machine).vi}`);
+      const id = (ctx.id+"_"+(tag==="close"?"fix":tag==="stop"?"stop":tag.slice(5))+"_"+Date.now().toString(36)).replace(/[^A-Za-z0-9_\-.~:@+]/g,"-");
+      PH[id]=data; S.newPh[id]=1;
+      if(tag==="close"){ S.closePh.push(id); renderSheet(); }
+      else { if(tag==="stop") (d.stopPhotos ||= []).push(id); else (d.items[tag.slice(5)].photos ||= []).push(id); S.err=""; render(); }
+    }catch(err){ toastErr(t("photoBad")); }
   } else if(el.id==="impfile" && el.files[0]){
     await doRestore(el.files[0]); el.value="";
   }
@@ -1888,6 +1989,7 @@ document.addEventListener("input", ev=>{
   if(k==="note") d.items[el.dataset.c].note = el.value;
   else if(k==="meas") d.items[el.dataset.c].meas = el.value;
   else if(k==="stopnote") d.stopNote = el.value;
+  else if(k==="closenote") S.closeNote = el.value;
   else if(k==="qty") S.sheet.qty = el.value.replace(/\D/g,"");
   else if(k==="psearch"){ S.sheet.q = el.value; document.getElementById("plist").innerHTML = productList(); }
   else if(k==="catq"){ S.catQ = el.value; document.getElementById("catlist").innerHTML = vCatList(); }
@@ -1913,10 +2015,16 @@ async function doSave(){
   const ex = recOn(d.date,d.form,d.machine,d.slot);
   if(ex && ex.worker!==e.id){ S.err=t("notMine"); render(); return; }
   if(apprOn(d.date,deptOfForm(d.form))){ S.err=t("locked"); render(); return; }
+  if(!ex && tooEarly(d.date,d.form,d.slot)){ S.err=fill(t("tooEarly"),{t:fmtMin(opensAt(d.form,d.slot))}); render(); return; }
   if(d.status==="run"){
     if(F.product==="req" && !d.product){ S.err=t("needProduct"); render(); window.scrollTo(0,0); return; }
     const bad = activeItems(d.form).find(it=>{ const v=d.items[it.c]; return itemIsX(F,v) && !v.chips.length && !v.note.trim(); });
     if(bad){ S.err=t("needX"); render(); document.getElementById("it-"+bad.c)?.scrollIntoView({block:"center"}); return; }
+  }
+  if(d.status==="broken" && !(d.stopPhotos||[]).length){ S.err=t("needStopPhoto"); render(); return; }
+  if(d.status==="run"){
+    const np = activeItems(d.form).find(it=>{ const v=d.items[it.c]; return (itemIsX(F,v)||needPhoto(it)) && !(v.photos||[]).length; });
+    if(np){ S.err=fill(t("needPhoto"),{n:L(np)}); render(); document.getElementById("it-"+np.c)?.scrollIntoView({block:"center"}); return; }
   }
   const n = new Date();
   Object.values(d.items).forEach(v=>{ if(!itemIsX(F,v)){ v.chips=[]; v.note=""; } });
@@ -1926,7 +2034,11 @@ async function doSave(){
     time: ex && d.time ? d.time : hm(n), savedDay: ex && d.savedDay ? d.savedDay : todayStr(), savedAt:n.toISOString()};
   if(ex) rec.editedAt = n.toISOString();
   if(d.status!=="run") rec.loai2 = [];
-  try{ await store.setDoc("checks", rec.id, rec); }catch(err){ S.err=t("saveErr"); render(); return; }
+  try{
+    const ids=[...(rec.stopPhotos||[])]; Object.values(rec.items||{}).forEach(v=>ids.push(...(v.photos||[])));
+    await writePhotos(ids, rec);
+    await store.setDoc("checks", rec.id, rec);
+  }catch(err){ S.err = err && err.code==="quota" ? t("photoFull") : t("saveErr"); render(); return; }
   if(rec.date===todayStr()) S.recs[rec.id] = rec;
   if(S.rev) S.rev.checks[rec.id] = rec;
   toast(t("saved"));
