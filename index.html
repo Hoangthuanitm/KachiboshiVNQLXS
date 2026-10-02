@@ -613,7 +613,7 @@ const TX = {
       aCount:"lượt đã phân công",aCopy:"Chép từ hôm trước",aClear:"Xoá phân công",aClearConfirm:"Bấm lần nữa để xoá",
       aQuick:"Giao cả phiếu cho",aApply:"Áp dụng",nobody:"— Chưa giao —",aSaved:"Đã cập nhật phân công",aNothing:"Hôm trước chưa có phân công",
       noDeptForms:"Bộ phận này không có phiếu kiểm.",
-      local:"Dữ liệu đang lưu trên thiết bị này. Admin nên sao lưu định kỳ trong Danh mục › Cài đặt.",
+      local:"Chế độ thử: dữ liệu chỉ lưu trên thiết bị này, không đồng bộ với máy khác.",
       noData:"Chưa có phiếu nào trong ngày này.",saveErr:"Không lưu được. Kiểm tra mạng rồi bấm lại.",
       cProducts:"Sản phẩm",cEmployees:"Nhân viên",cErrors:"Danh sách lỗi",cMachines:"Máy / chuyền",cForms:"Phiếu & hạng mục",cSettings:"Cài đặt & sao lưu",
       code:"Mã",name:"Tên",aliases:"Tên gọi tắt",aliasPh:"Cách nhau bằng dấu phẩy",ptype:"Loại hàng",dept:"Bộ phận",role:"Vai trò",nameVi:"Tên tiếng Việt",nameJp:"Tên tiếng Nhật",
@@ -665,6 +665,11 @@ const TX = {
       resetCat:"マスタを初期化",resetConfirm:"もう一度押すと初期化します",usedBy:"使用する点検表",lastAdmin:"管理者は最低1名必要です",idTaken:"このコードは使用中です"}
 };
 Object.assign(TX.vi,{
+  connecting:"Đang kết nối dữ liệu…", noServer:"Không kết nối được máy chủ dữ liệu", noServerSub:"Kiểm tra mạng (Wi‑Fi / 4G) rồi bấm thử lại. App cần mạng ở lần mở đầu tiên.", retry:"THỬ LẠI",
+  fsDenied:"Firestore từ chối truy cập. Kiểm tra Security Rules của collection kachiboshivnqlsx",
+  noLead:"Bộ phận chưa có tổ trưởng", logT:"Lịch sử mở lại", reasonSub:"Mở lại để sửa sai sót sau khi đã xác nhận. Lý do được lưu lại và quản lý xem được.", reasonPh:"Lý do mở lại (bắt buộc)", reasonNeed:"Ghi lý do trước khi mở lại",
+  kUnconf:"Ngày chưa xác nhận", kUnconfSub:"{a} chờ tổ trưởng · {b} chờ nhân viên",
+  csT:"Tình trạng xác nhận của tổ trưởng", csSub:"Bấm vào ngày để mở", csLead:"Tổ trưởng", csDays:"Ngày có việc", csOK:"Đã xác nhận", csFinal:"Admin đã duyệt", csNo:"Chưa xác nhận", csList:"Các ngày chưa xác nhận", csWaitW:"Chờ nhân viên kiểm xong", csReopen:"mở lại {n} lần",
   tooEarly:"Chưa đến giờ kiểm. Mở từ {t}.", opensAt:"Mở lúc {t}",
   photo:"Chụp ảnh", photoReq:"bắt buộc", needPhoto:"Thiếu ảnh ở mục: {n}", needStopPhoto:"Máy hỏng: cần chụp ít nhất 1 ảnh", photoAfter:"Ảnh sau xử lý (nếu có)",
   photoFull:"Bộ nhớ máy đã đầy, không lưu được ảnh. Báo Admin sao lưu và dọn dữ liệu.", photoBad:"Không đọc được ảnh, hãy chụp lại.", photoCol:"Bắt buộc ảnh",
@@ -688,7 +693,7 @@ Object.assign(TX.vi,{
   fromM:"Từ tháng", toM:"Đến tháng", pThis:"Tháng này", p3:"3 tháng gần nhất", pYtd:"Từ đầu năm", allForms:"Tất cả",
   filterHint:"Bấm vào thanh, cột, ô lịch hoặc dòng nhân viên để lọc toàn bộ dashboard. Bấm lại để bỏ lọc.", filtering:"Đang lọc", refresh:"Làm mới",
   kComp:"Tuân thủ kiểm tra", kCompSub:"{a}/{b} lượt kiểm đúng giờ", kNG:"Lần NG", kNGSub:"trên {n} lần kiểm", kL2b:"Hàng loại 2", kL2Sub:"đôi bị loại ra",
-  kLM:"Nhập trễ / bỏ sót", kLMSub:"{a} trễ · {b} bỏ sót", kOpen:"NG chưa khép lại", kOpenSub:"cần tổ trưởng ghi biện pháp",
+  kLM:"Nhập trễ / bỏ sót", kLMSub:"{a} trễ · {b} bỏ sót", kOpen:"NG chưa xử lý", kOpenSub:"cần tổ trưởng ghi báo cáo xử lý",
   prev:"Kỳ trước", noPrev:"Kỳ trước chưa có dữ liệu", unassignedN:"{n} lượt chưa phân công", cumul:"Cộng dồn",
   pErr:"Loại lỗi phát hiện nhiều nhất", pErrSub:"Số đôi loại 2, xếp giảm dần · % cộng dồn (Pareto): xử lý các loại đầu danh sách trước.",
   pItem:"Hạng mục kiểm tra bị NG nhiều nhất", pMach:"Máy / chuyền nhiều bất thường nhất", pMachSub:"Tỷ lệ lần kiểm bị NG trên tổng lần kiểm của máy.",
@@ -698,6 +703,11 @@ Object.assign(TX.vi,{
   times:"lần", legNone:"Không giao / chưa tới"
 });
 Object.assign(TX.jp,{
+  connecting:"データに接続中…", noServer:"データサーバーに接続できません", noServerSub:"通信（Wi‑Fi / 4G）を確認して再試行してください。初回起動時は通信が必要です。", retry:"再試行",
+  fsDenied:"Firestore へのアクセスが拒否されました。コレクション kachiboshivnqlsx のセキュリティルールを確認してください",
+  noLead:"班長が未設定の部署", logT:"取消の履歴", reasonSub:"確認後の誤りを修正するために取り消します。理由は記録され、管理者が確認できます。", reasonPh:"取消の理由（必須）", reasonNeed:"理由を入力してください",
+  kUnconf:"未確認の日", kUnconfSub:"班長待ち {a} · 作業者待ち {b}",
+  csT:"班長の確認状況", csSub:"日付をタップして開く", csLead:"班長", csDays:"作業日", csOK:"確認済", csFinal:"最終承認済", csNo:"未確認", csList:"未確認の日", csWaitW:"作業者の点検待ち", csReopen:"取消 {n} 回",
   tooEarly:"まだ点検時刻ではありません。{t} から入力できます。", opensAt:"{t} から",
   photo:"写真を撮る", photoReq:"必須", needPhoto:"写真が必要な項目: {n}", needStopPhoto:"故障時は写真が1枚以上必要です", photoAfter:"処置後の写真（任意）",
   photoFull:"端末の保存容量が不足しています。管理者に連絡してください。", photoBad:"写真を読み込めません。撮り直してください。", photoCol:"写真必須",
@@ -765,24 +775,57 @@ async function hashPw(pw, salt){
 const newSalt = () => Math.random().toString(36).slice(2,10)+Date.now().toString(36);
 
 /* ===================== LƯU TRỮ ===================== */
+const FB_CONFIG = {
+  apiKey: "AIzaSyAfy4QMD9_7PyFHpInNdKDRWuW4AYCtLJ4",
+  authDomain: "history-e4633.firebaseapp.com",
+  projectId: "history-e4633",
+  storageBucket: "history-e4633.firebasestorage.app",
+  messagingSenderId: "331974436893",
+  appId: "1:331974436893:web:10c3c6adf7b66d2b5fbef4",
+  measurementId: "G-DC055090BW"
+};
+const FS_COL = "kachiboshivnqlsx";
+const FB_SDK = "https://www.gstatic.com/firebasejs/10.12.2/";
+function loadScript(src){
+  return new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src=src; sc.onload=()=>res(); sc.onerror=()=>rej(new Error("load")); document.head.appendChild(sc); setTimeout(()=>rej(new Error("timeout")),15000); });
+}
+const fsKey = (col,date) => col+"|"+(date||"");
+const fsClean = o => JSON.parse(JSON.stringify(o));
+const fsUnwrap = d => { const x=d.data(); delete x._c; delete x._k; return x; };
+/* ghi khi mất mạng: Firestore giữ trong hàng đợi và tự đồng bộ, nên không chờ vô hạn */
+const fsWait = p => Promise.race([p, new Promise(r=>setTimeout(r,4000))]);
 const store = {
-  mode:"local", db:null, dl:null, subs:{}, mem:{},
+  mode:"local", db:null, fs:null, dl:null, subs:{}, mem:{}, blocked:false,
   async init(){
     try{
       if(window.claude && window.claude.use){
         const db = await window.claude.use("db");
         if(db){ this.db = db; this.mode = "db"; }
         window.claude.use("downloads").then(d=>{ this.dl = d; }).catch(()=>{});
+        return;
       }
     }catch(e){}
+    if(location.hash==="#local") return;   /* chế độ thử trên một máy, không dùng Firestore */
+    try{
+      await loadScript(FB_SDK+"firebase-app-compat.js");
+      await loadScript(FB_SDK+"firebase-firestore-compat.js");
+      const fb = window.firebase; fb.initializeApp(FB_CONFIG);
+      const f = fb.firestore();
+      try{ await f.enablePersistence({synchronizeTabs:true}); }catch(e){}
+      this.fs = f.collection(FS_COL); this.mode = "fs";
+    }catch(e){ this.blocked = true; }
   },
+  fsError(e){ S.fsErr = (e && e.code) || "error"; if(S.view!=="form") render(); },
   lsGet(k,def){ try{ const v=localStorage.getItem(k); if(v!=null) return JSON.parse(v); }catch(e){} return this.mem[k] ?? def; },
   lsSet(k,v){ this.mem[k]=v; try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ return !(e && /quota/i.test((e.name||"")+(e.message||""))); } },
   stop(key){ if(this.subs[key]){ this.subs[key](); delete this.subs[key]; } },
   stopAll(){ Object.keys(this.subs).forEach(k=>this.stop(k)); },
   watchByDate(col, date, cb){
     this.stop(col);
-    if(this.mode==="db"){
+    if(this.mode==="fs"){
+      this.subs[col] = this.fs.where("_k","==",fsKey(col,date)).onSnapshot(
+        s=>{ const m={}; s.forEach(d=>{ m[d.id.slice(col.length+2)]=fsUnwrap(d); }); S.fsErr=""; cb(m); }, e=>this.fsError(e));
+    } else if(this.mode==="db"){
       this.subs[col] = this.db.collection(col).where("date","==",date).onSnapshot(
         s=>{ const m={}; s.docs.forEach(d=>m[d.id]=d.data()); cb(m); }, ()=>{});
     } else {
@@ -791,10 +834,12 @@ const store = {
     }
   },
   async byDate(col, date){
+    if(this.mode==="fs"){ const s=await this.fs.where("_k","==",fsKey(col,date)).get(); const m={}; s.forEach(d=>{ m[d.id.slice(col.length+2)]=fsUnwrap(d); }); return m; }
     if(this.mode==="db"){ const s=await this.db.collection(col).where("date","==",date).get(); const m={}; s.docs.forEach(d=>m[d.id]=d.data()); return m; }
     const all=this.lsGet("qc_"+col,{}); const m={}; Object.entries(all).forEach(([k,v])=>{ if(v.date===date) m[k]=v; }); return m;
   },
   async range(col,a,b){
+    if(this.mode==="fs"){ const s=await this.fs.where("_k",">=",fsKey(col,a)).where("_k","<=",fsKey(col,b)).get(); const out=[]; s.forEach(d=>out.push({...fsUnwrap(d), _id:d.id.slice(col.length+2)})); return out; }
     if(this.mode==="db"){
       const s = await this.db.collection(col).where("date",">=",a).where("date","<=",b).limit(1000).get();
       return s.docs.map(d=>({...d.data(), _id:d.id}));
@@ -802,26 +847,32 @@ const store = {
     return Object.entries(this.lsGet("qc_"+col,{})).filter(([k,r])=>r.date>=a&&r.date<=b).map(([k,r])=>({...r,_id:k}));
   },
   async setDoc(col,id,data){
+    if(this.mode==="fs"){ await fsWait(this.fs.doc(col+"__"+id).set({...fsClean(data), _c:col, _k:fsKey(col,data.date)})); return; }
     if(this.mode==="db") await this.db.collection(col).doc(id).set(data);
     else { const all=this.lsGet("qc_"+col,{}); all[id]=data; if(!this.lsSet("qc_"+col,all)){ delete all[id]; this.lsSet("qc_"+col,all); throw {code:"quota"}; } }
   },
   async getDoc(col,id){
+    if(this.mode==="fs"){ const d=await this.fs.doc(col+"__"+id).get(); return d.exists?fsUnwrap(d):null; }
     if(this.mode==="db"){ const s=await this.db.collection(col).doc(id).get(); return s.exists?s.data():null; }
     return this.lsGet("qc_"+col,{})[id] || null;
   },
   async delDoc(col,id){
+    if(this.mode==="fs"){ await fsWait(this.fs.doc(col+"__"+id).delete()); return; }
     if(this.mode==="db") await this.db.collection(col).doc(id).delete();
     else { const all=this.lsGet("qc_"+col,{}); delete all[id]; this.lsSet("qc_"+col,all); }
   },
   async listIds(col){
+    if(this.mode==="fs"){ const s=await this.fs.where("_c","==",col).get(); const out=[]; s.forEach(d=>out.push(d.id.slice(col.length+2))); return out; }
     if(this.mode==="db"){ const s=await this.db.collection(col).limit(1000).get(); return s.docs.map(d=>d.id); }
     return Object.keys(this.lsGet("qc_"+col,{}));
   },
   watchMaster(cb){
-    if(this.mode==="db") this.db.doc("master/config").onSnapshot(s=>cb(s.exists ? s.data() : null), ()=>{});
+    if(this.mode==="fs"){ this.fs.doc("master__config").onSnapshot(d=>{ S.fsErr=""; cb(d.exists?fsUnwrap(d):null); }, e=>{ this.fsError(e); cb(null); }); return; }
+    if(this.mode==="db") this.db.doc("master/config").onSnapshot(s=>cb(s.exists ? s.data() : null), ()=>cb(null));
     else cb(this.lsGet("qc_master",null));
   },
   async saveMaster(m){
+    if(this.mode==="fs"){ await fsWait(this.fs.doc("master__config").set({...fsClean(m), _c:"master", _k:"master|"})); return; }
     if(this.mode==="db") await this.db.doc("master/config").set(m);
     else this.lsSet("qc_master",m);
   }
@@ -841,7 +892,7 @@ async function offerFile(name, text, mime){
 const S = { view:"login", tab:"input", me:null, master:mergeMaster(null), recs:{}, assign:{}, appr:{}, trendRows:[], trendFor:"",
   date:todayStr(), sumDate:todayStr(), aDate:todayStr(), aDept:null, draft:null, sheet:null, err:"",
   rev:null, cDate:todayStr(), cDept:null, cArm:false, apprWeek:{}, aWeekDocs:{}, dFrom:todayStr().slice(0,7), dTo:todayStr().slice(0,7), dForm:"all", dFilt:null, dData:null, dKey:"", dLoading:false,
-  cat:"employees", catQ:"", formSel:"KK", resetArm:false, clearArm:false, authSet:new Set(), newPh:{}, delPh:[], camTag:"", closePh:[], closeNote:"", login:{id:"",err:"",fails:0,until:0}, pwForced:false };
+  cat:"employees", catQ:"", formSel:"KK", resetArm:false, clearArm:false, boot:"load", fsErr:"", authSet:new Set(), newPh:{}, delPh:[], camTag:"", closePh:[], closeNote:"", login:{id:"",err:"",fails:0,until:0}, pwForced:false };
 
 const FM = f => S.master.forms[f];
 const MC = id => S.master.machines.find(m=>m.id===id) || {vi:id,jp:id};
@@ -897,6 +948,12 @@ function render(){
   if(!e && !["login"].includes(S.view)) S.view="login";
   document.body.classList.toggle("wide", S.view==="main" && S.tab!=="input");
   topEl.innerHTML = vTop(e);
+  if(S.boot!=="ok"){
+    app.innerHTML = `<div class="login"><div class="card" style="text-align:center"><div class="logo-full"><img src="${LOGO_FULL}" alt="Kachiboshi Viet Nam"></div>`+
+      (S.boot==="blocked" ? `<p style="margin:0;font-weight:700;color:var(--bad)">${t("noServer")}</p><p class="muted" style="margin:0;font-size:14px">${t("noServerSub")}</p><button class="big" data-act="reload">${t("retry")}</button>`
+                          : `<p class="muted" style="margin:0">${t("connecting")}</p>`)+`</div></div>`;
+    sheetEl.innerHTML=""; return;
+  }
   app.innerHTML = S.view==="login" ? vLogin() : S.view==="pw" ? vPw() : S.view==="form" ? vForm() : vMain(e);
   renderSheet();
 }
@@ -921,7 +978,8 @@ function vTop(e){
   }
   return h;
 }
-const banner = () => store.mode==="local" ? `<div class="banner">${ico("alert")}<span>${t("local")}</span></div>` : "";
+const banner = () => store.mode==="local" ? `<div class="banner">${ico("alert")}<span>${t("local")}</span></div>`
+  : S.fsErr ? `<div class="banner" style="background:var(--bad-bg);color:var(--bad)">${ico("alert")}<span>${t("fsDenied")} (${esc(S.fsErr)})</span></div>` : "";
 
 /* ---------- đăng nhập ---------- */
 function vLogin(){
@@ -1018,7 +1076,7 @@ function vReview(e){
   const dayName = d => (d===td?t("today")+" · ":"")+WD[LANG][wdOf(d)]+" "+shortDate(d);
   const row = (d,x) => `<button class="revrow" data-act="goConfirm" data-d="${d}" data-dept="${x.dept}"><span class="nm">${esc(L(DEPTS[x.dept]))}</span>
       <span class="cnt"><b style="color:var(--ink)">${x.done}/${x.total}</b> ${t("checkedN")}${x.ng?` · <b style="color:var(--bad)">${x.ng} NG</b>`:""}</span>
-      ${x.appr?`<span class="badge b-ok">${ico("check")}${esc(x.appr.name)} · ${esc(x.appr.time)}</span>`:x.done<x.total?`<span class="badge b-wait">${ico("clock")}${fill(t("waitWorker"),{n:x.total-x.done})}</span>`:`<span class="badge b-warn">${ico("clock")}${ad?t("waitLead"):t("openConfirm")}</span>`}${ico("next")}</button>`;
+      ${x.appr?`<span class="badge b-ok">${ico("check")}${esc(x.appr.name)} · ${esc(x.appr.time)}</span>`:x.done<x.total?`<span class="badge b-wait">${ico("clock")}${fill(t("waitWorker"),{n:x.total-x.done})}</span>`:`<span class="badge ${ad&&!leadsOf(x.dept)?"b-bad":"b-warn"}">${ico("clock")}${ad?(leadsOf(x.dept)?t("waitLead")+": "+esc(leadsOf(x.dept)):t("noLead")):t("openConfirm")}</span>`}${ico("next")}</button>`;
   let h = `<div class="label">${ico("check")}<span style="color:var(--ink)">${ad?t("revAD"):t("revTT")}</span></div><p class="muted" style="margin:-4px 2px 10px;font-size:14px">${ad?t("revSubAD"):t("revSubTT")}</p>`;
   if(!S.rev) return h+`<div class="empty">…</div>`;
   const open = ad ? days.filter(x=>!x.final) : days.map(x=>({...x,depts:x.depts.filter(y=>!y.appr)})).filter(x=>x.depts.length);
@@ -1216,6 +1274,11 @@ function renderSheet(){
     for(let k=0;k<14;k++){ const d=shiftDate(ws,k); const dis = d<td || d===S.aDate;
       h += `<button class="wday" ${dis?"disabled style='opacity:.35'":""} aria-pressed="${sh.sel.has(d)}" data-act="cpDay" data-v="${d}"><small>${WD[LANG][wdOf(d)]}</small><b>${shortDate(d)}</b><span class="wcnt">${sh.sel.has(d)?"✓":""}</span></button>`; }
     h += `</div><button class="big" data-act="cpApply" ${sh.sel.size?"":"disabled style='opacity:.5'"}>${ico("copy")}${t("copyApply")} (${sh.sel.size})</button>`;
+  } else if(sh.type==="reason"){
+    h += `<div class="sheet-h"><b>${ico("upload")}${t("reopen")} ${shortDate(sh.d)}</b>${closeBtn()}</div>
+      <p class="muted" style="margin:0;font-size:14px">${t("reasonSub")}</p>
+      <textarea id="reasonTxt" class="note" style="min-height:90px" placeholder="${esc(t("reasonPh"))}"></textarea>
+      <button class="big" data-act="reasonOk">${t("reopen")}</button>`;
   } else if(sh.type==="menu"){
     const e = meEmp();
     h += `<div class="sheet-h"><b>${t("change")}</b>${closeBtn()}</div>
@@ -1386,14 +1449,18 @@ function vConfirm(e){
   if(appr){
     h += `<span class="badge b-ok" style="font-size:14.5px;padding:9px 14px">${ico("check")}${t("approved")} ${t("by")} ${esc(appr.name)} · ${esc(appr.time)}</span>
       ${S.appr[date+"_FINAL"]?`<span class="badge b-ok" style="font-size:14.5px;padding:9px 14px">${ico("lock")}${t("finalDone")} · ${esc(S.appr[date+"_FINAL"].name)}</span>`:""}
-      ${(!S.appr[date+"_FINAL"] && (appr.by===e.id||isAD(e)))?`<button class="ghost" data-act="cReopen">${ico("upload")}${t("reopen")}</button>`:""}`;
+      ${(!S.appr[date+"_FINAL"] && isDeptLead(e,dept))?`<button class="ghost" data-act="cReopen">${ico("upload")}${t("reopen")}</button>`:""}`;
   } else {
     const left = c.miss + c.pending;
     if(!left && c.open) h += `<span class="badge b-bad" style="font-size:14.5px;padding:10px 14px">${ico("lock")}${fill(t("openNGBlock"),{n:c.open})}</span>`;
     if(left) h += `<span class="badge b-warn" style="font-size:14.5px;padding:10px 14px;white-space:normal">${ico("lock")}${fill(t("confirmBlock"),{n:left})}</span>`;
-    else if(rows.length && !c.open) h += `<button class="primary" style="min-height:52px;font-size:16.5px" data-act="cApprove">${ico("check")}${t("confirmDay")} ${shortDate(date)}</button>`;
+    else if(rows.length && !c.open) h += isDeptLead(e,dept) ? `<button class="primary" style="min-height:52px;font-size:16.5px" data-act="cApprove">${ico("check")}${t("confirmDay")} ${shortDate(date)}</button>`
+      : `<span class="badge b-warn" style="font-size:14.5px;padding:10px 14px">${ico("clock")}${leadsOf(dept)?t("waitLead")+": "+esc(leadsOf(dept)):t("noLead")}</span>`;
   }
-  h += `</div></div>`;
+  h += `</div>`;
+  const lg = Object.values(S.logs||{}).filter(x=>x.dept===dept||x.dept==="FINAL").sort((a,b)=>a.at<b.at?-1:1);
+  if(lg.length) h += `<div style="margin-top:12px;font-size:13.5px"><b>${t("logT")}</b>`+lg.map(x=>`<div class="muted">${esc(x.time)} · ${esc(x.name)} · ${x.dept==="FINAL"?t("finalDone")+" → ":""}${t("reopen")}: “${esc(x.reason)}”</div>`).join("")+`</div>`;
+  h += `</div>`;
   if(!rows.length) return h+`<div class="empty">${t("noPeople")}</div>`;
   h += `<div class="card"><div class="tbl-wrap"><table class="ptable crow"><thead><tr><th>${t("formF")}</th><th>${t("machine")}</th><th>${t("slot")}</th><th>${t("who")}</th><th>${t("result")}</th><th>${t("stNG")}</th></tr></thead><tbody>`;
   rows.sort((a,b)=>(FORM_ORDER.indexOf(a.f)-FORM_ORDER.indexOf(b.f))||a.m.localeCompare(b.m)||a.i-b.i).forEach(r=>{
@@ -1404,7 +1471,8 @@ function vConfirm(e){
   });
   return h+`</tbody></table></div></div>`;
 }
-const canClose = (e,r) => e && ["TT","QL","AD"].includes(e.role) && (isAD(e) || e.dept==="QL" || deptOfForm(r.form)===e.dept);
+const isDeptLead = (e,dept) => !!e && ["TT","QL"].includes(e.role) && e.dept===dept;
+const canClose = (e,r) => isDeptLead(e, deptOfForm(r.form));
 /* ---------- dashboard ---------- */
 const ymOf = d => d.slice(0,7);
 const monthStart = ym => ym+"-01";
@@ -1425,9 +1493,9 @@ async function loadDash(){
   const key = S.dFrom+"_"+S.dTo; S.dKey = key; S.dLoading = true; render();
   try{
     const [pf] = prevRange();
-    const [rows, assigns] = await Promise.all([rangeMonths("checks", pf, S.dTo), rangeMonths("assign", pf, S.dTo)]);
+    const [rows, assigns, apprs, logs] = await Promise.all([rangeMonths("checks", pf, S.dTo), rangeMonths("assign", pf, S.dTo), rangeMonths("approvals", S.dFrom, S.dTo), rangeMonths("logs", S.dFrom, S.dTo)]);
     if(S.dKey!==key) return;
-    S.dData = {rows, assigns};
+    S.dData = {rows, assigns, appr:Object.fromEntries(apprs.map(r=>[r._id,r])), logs};
   }catch(err){ toastErr(t("saveErr")); }
   S.dLoading = false; refresh();
 }
@@ -1446,6 +1514,19 @@ function collect(from, to, forms){
     slots.push({date:d,f,m,i,assignee:who,who:rec?rec.worker:who,rec,...outcome(d,f,i,rec)});
   }))));
   return {slots, unassigned};
+}
+function confirmStatus(slots, forms, canOpen){
+  const A = (S.dData && S.dData.appr) || {}, td = todayStr(), by = {};
+  slots.forEach(x=>{ if(x.date>td) return; const dept=deptOfForm(x.f), g=(by[dept] ||= {}), dd=(g[x.date] ||= {total:0,done:0}); dd.total++; if(x.rec) dd.done++; });
+  const out = {rows:[], unconf:0, waitLead:0, waitWorker:0};
+  [...new Set(forms.map(deptOfForm))].forEach(dept=>{
+    const g = by[dept]||{}, r = {dept, lead:leadsOf(dept), days:0, ok:0, final:0, no:[], reopens:(S.dData.logs||[]).filter(l=>l.dept===dept).length};
+    Object.keys(g).sort().forEach(d=>{ r.days++;
+      if(A[d+"_"+dept]){ r.ok++; if(A[d+"_FINAL"]) r.final++; }
+      else { const left=g[d].total-g[d].done; r.no.push({d, left, wait:left?"worker":"lead"}); left ? out.waitWorker++ : out.waitLead++; } });
+    out.unconf += r.no.length; out.rows.push(r);
+  });
+  return out;
 }
 function applyFilt(slots){
   const F = S.dFilt; if(!F) return slots;
@@ -1561,6 +1642,7 @@ function vDash(e){
   const cur = collect(from, to, forms), slots = applyFilt(cur.slots), st = stats(slots);
   const [pf,pt] = prevRange(); const pv = collect(monthStart(pf), monthEnd(pt), forms), ps = stats(applyFilt(pv.slots));
   const hasPrev = pv.slots.length>0;
+  const cs = confirmStatus(cur.slots, forms, !!manageDepts(e).length);
   const pct = v => v==null?"—":Math.round(v*100)+"%";
   /* KPI */
   h += `<div class="kpis5">
@@ -1568,7 +1650,14 @@ function vDash(e){
     ${kpiCard(t("kNG"), st.ng, fill(t("kNGSub"),{n:st.checks})+(st.ngRate!=null?` · ${(st.ngRate*100).toFixed(1)}%`:""), cmpTxt(st.ng,ps.ng,false,v=>v,hasPrev), st.ng?"var(--bad)":"")}
     ${kpiCard(t("kL2b"), st.l2.toLocaleString("vi-VN"), t("kL2Sub"), cmpTxt(st.l2,ps.l2,false,v=>v.toLocaleString("vi-VN"),hasPrev), "")}
     ${kpiCard(t("kLM"), st.late+st.miss, fill(t("kLMSub"),{a:st.late,b:st.miss}), cmpTxt(st.late+st.miss,ps.late+ps.miss,false,v=>v,hasPrev), st.late+st.miss?"var(--warn)":"")}
-    ${kpiCard(t("kOpen"), st.open, t("kOpenSub"), "", st.open?"var(--bad)":"var(--ok)")}</div>`;
+    ${kpiCard(t("kOpen"), st.open, t("kOpenSub"), "", st.open?"var(--bad)":"var(--ok)")}
+    ${kpiCard(t("kUnconf"), cs.unconf, fill(t("kUnconfSub"),{a:cs.waitLead,b:cs.waitWorker}), "", cs.unconf?"var(--warn)":"var(--ok)")}</div>`;
+  /* tình trạng xác nhận theo bộ phận */
+  h += `<div class="card" style="margin-top:14px"><h3>${ico("check")}${t("csT")}<span class="sub">${t("csSub")}</span></h3><div class="tbl-wrap"><table class="ptable crow2"><thead><tr><th>${t("dept")}</th><th>${t("csLead")}</th><th class="num">${t("csDays")}</th><th class="num">${t("csOK")}</th><th class="num">${t("csFinal")}</th><th class="num">${t("csNo")}</th><th>${t("csList")}</th></tr></thead><tbody>`+
+    cs.rows.map(r=>`<tr><td><b>${esc(L(DEPTS[r.dept]))}</b></td><td>${r.lead?esc(r.lead):`<span class="badge b-bad">${t("noLead")}</span>`}</td><td class="num">${r.days}</td><td class="num">${r.ok}</td><td class="num">${r.final}</td>
+      <td class="num"><b style="${r.no.length?"color:var(--bad)":"color:var(--ok)"}">${r.no.length}</b></td>
+      <td><span style="display:flex;gap:6px;flex-wrap:wrap">${r.no.slice(0,12).map(x=>`<button class="badge ${x.wait==="lead"?"b-warn":"b-wait"}" data-act="goConfirm" data-d="${x.d}" data-dept="${r.dept}" data-tip="${esc(showDate(x.d)+"\n"+(x.wait==="lead"?t("waitLead"):fill(t("waitWorker"),{n:x.left})))}">${shortDate(x.d)}</button>`).join("")}${r.no.length>12?`<span class="muted">+${r.no.length-12}</span>`:""}${r.reopens?`<span class="badge b-stop">${ico("upload")}${fill(t("csReopen"),{n:r.reopens})}</span>`:""}</span></td></tr>`).join("")+
+    `</tbody></table></div><div class="legend" style="margin-top:10px"><span><i style="background:var(--warn-bg);box-shadow:inset 0 0 0 1px var(--warn)"></i>${t("waitLead")}</span><span><i style="background:var(--sunk)"></i>${t("csWaitW")}</span></div></div>`;
   h += `<div class="dgrid" style="margin-top:14px">`;
   /* Pareto loại lỗi */
   const errAgg = {}; slots.forEach(x=>x.rec&&(x.rec.loai2||[]).forEach(l=>errAgg[l.err]=(errAgg[l.err]||0)+l.doi));
@@ -1721,6 +1810,8 @@ function loadData(){
   store.watchByDate("assign", date, m=>{ S.assign=m; refresh(); });
   store.watchByDate("approvals", date, m=>{ S.appr=m; refresh(); });
   if(S.tab==="assign"){ const ws=wkStart(S.aDate); store.range("assign", ws, shiftDate(ws,6)).then(rows=>{ S.aWeekDocs=Object.fromEntries(rows.map(r=>[r._id,r])); refresh(); }).catch(()=>{}); }
+  S.logs = {};
+  if(S.tab==="confirm") store.watchByDate("logs", date, m=>{ S.logs=m; refresh(); }); else store.stop("logs");
   if(S.tab==="confirm"){ const td=todayStr(); store.range("approvals", shiftDate(td,-6), td).then(rows=>{ S.apprWeek=Object.fromEntries(rows.map(r=>[r._id,r])); refresh(); }).catch(()=>{}); }
   if(S.tab==="input"){
     const td=todayStr(), a=shiftDate(td,-6); S.rev=null;
@@ -1801,6 +1892,7 @@ document.addEventListener("click", async ev=>{
   if(b.classList.contains("scrim") && ev.target.closest("[data-stop]")) return;
   const a = b.dataset.act, d = S.draft, e = meEmp();
   switch(a){
+    case "reload": location.reload(); break;
     case "lang": LANG = LANG==="vi"?"jp":"vi"; try{localStorage.setItem("qc_lang",LANG);}catch(x){} render(); break;
     case "showpw": { const i=document.getElementById(b.dataset.for); i.type = i.type==="password"?"text":"password"; break; }
     case "menu": S.sheet={type:"menu"}; renderSheet(); break;
@@ -1828,21 +1920,18 @@ document.addEventListener("click", async ev=>{
       const map={...((S.assign[S.aDate+"_"+S.aDept]||S.aWeekDocs[S.aDate+"_"+S.aDept]||{}).map||{})}; const days=[...S.sheet.sel];
       if(!days.length) return;
       try{ for(const d of days) await saveAssign(S.aDept, {...map}, d); S.sheet=null; toast(fill(t("copied"),{n:days.length})); render(); }catch(err){ toastErr(t("saveErr")); } break; }
-    case "goConfirm": S.tab="confirm"; S.cDate=b.dataset.d; S.cDept=b.dataset.dept; S.cArm=false; loadData(); render(); window.scrollTo(0,0); break;
+    case "goConfirm": if(!manageDepts(e).length) return; tip.hidden=true; S.tab="confirm"; S.cDate=b.dataset.d; S.cDept=b.dataset.dept; S.cArm=false; loadData(); render(); window.scrollTo(0,0); break;
     case "finalApprove": {
       if(!isAD(e)) return; const d0=b.dataset.d, n=new Date();
       const day=reviewDays(e).find(x=>x.date===d0); if(!day || day.depts.some(y=>!y.appr)){ toastErr(fill(t("finalWait"),{n:day?day.depts.filter(y=>!y.appr).length:0})); return; }
       const data={date:d0,dept:"FINAL",by:e.id,name:e.name,time:hm(n)+" "+shortDate(todayStr()),at:n.toISOString()};
       try{ await store.setDoc("approvals", d0+"_FINAL", data); if(S.rev) S.rev.appr[d0+"_FINAL"]=data; toast(t("finalDone")); render(); }catch(err){ toastErr(t("saveErr")); }
       break; }
-    case "finalUndo": {
-      if(!isAD(e)) return; const d0=b.dataset.d;
-      try{ await store.delDoc("approvals", d0+"_FINAL"); if(S.rev) delete S.rev.appr[d0+"_FINAL"]; toast(t("reopened")); render(); }catch(err){ toastErr(t("saveErr")); }
-      break; }
+    case "finalUndo": { if(!isAD(e)) return; S.sheet={type:"reason",kind:"final",d:b.dataset.d,dept:"FINAL",txt:""}; renderSheet(); break; }
     case "cDay": S.cDate=shiftDate(S.cDate,+b.dataset.v); S.cArm=false; loadData(); render(); break;
     case "cPick": S.cDate=b.dataset.v; S.cArm=false; loadData(); render(); break;
     case "cDept": S.cDept=b.dataset.v; S.cArm=false; render(); break;
-    case "cApprove": {
+    case "cApprove": { if(!isDeptLead(e,S.cDept)) return;
       const rows=confirmRows(S.cDept,S.cDate); const left=rows.filter(r=>r.st==="miss"||r.st==="pending").length;
       if(left || !rows.length){ toastErr(fill(t("confirmBlock"),{n:left})); return; }
       const openNG=rows.filter(r=>r.st==="ng" && !r.rec.close).length; if(openNG){ toastErr(fill(t("openNGBlock"),{n:openNG})); return; }
@@ -1850,7 +1939,19 @@ document.addEventListener("click", async ev=>{
       const data={date:S.cDate,dept:S.cDept,by:e.id,name:e.name,time:hm(n)+" "+shortDate(todayStr()),at:n.toISOString(),done:rows.filter(r=>r.rec).length,total:rows.length};
       try{ await store.setDoc("approvals", S.cDate+"_"+S.cDept, data); S.appr[S.cDate+"_"+S.cDept]=data; S.apprWeek[S.cDate+"_"+S.cDept]=data; toast(t("approved")); render(); }catch(err){ toastErr(t("saveErr")); }
       break; }
-    case "cReopen": { if(S.appr[S.cDate+"_FINAL"]){ toastErr(t("finalLocked")); return; } try{ await store.delDoc("approvals", S.cDate+"_"+S.cDept); delete S.appr[S.cDate+"_"+S.cDept]; delete S.apprWeek[S.cDate+"_"+S.cDept]; toast(t("reopened")); render(); }catch(err){ toastErr(t("saveErr")); } break; }
+    case "cReopen": { if(S.appr[S.cDate+"_FINAL"]){ toastErr(t("finalLocked")); return; } if(!isDeptLead(e,S.cDept)) return; S.sheet={type:"reason",kind:"reopen",d:S.cDate,dept:S.cDept,txt:""}; renderSheet(); break; }
+    case "reasonOk": {
+      const sh=S.sheet, reason=(document.getElementById("reasonTxt")?.value||"").trim(); if(!reason){ toastErr(t("reasonNeed")); return; }
+      const n=new Date(), dept=sh.kind==="final"?"FINAL":sh.dept;
+      const log={date:sh.d,dept,type:sh.kind,by:e.id,name:e.name,reason,at:n.toISOString(),time:hm(n)+" "+shortDate(todayStr())};
+      try{
+        await store.setDoc("logs", sh.d+"_"+dept+"_"+n.getTime().toString(36), log);
+        await store.delDoc("approvals", sh.d+"_"+dept);
+        delete S.appr[sh.d+"_"+dept]; delete S.apprWeek[sh.d+"_"+dept]; if(S.rev) delete S.rev.appr[sh.d+"_"+dept];
+        (S.logs ||= {})[n.getTime().toString(36)] = log;
+        S.sheet=null; toast(t("reopened")); render();
+      }catch(err){ toastErr(t("saveErr")); }
+      break; }
     case "closeNG": {
       const r=findRec(b.dataset.id); const note=(document.getElementById("closeNote")?.value||"").trim();
       if(!r) return; if(!note){ toastErr(t("closeNeed")); return; }
@@ -2097,11 +2198,12 @@ async function doRestore(file){
   try{ S.login.id = localStorage.getItem("qc_lastid") || ""; }catch(e){}
   render();
   await store.init();
+  if(store.blocked){ S.boot="blocked"; render(); return; }
   let first = true;
   store.watchMaster(m=>{
     S.master = mergeMaster(m);
     if(first){
-      first = false;
+      first = false; S.boot="ok";
       let sess=null; try{ sess=JSON.parse(localStorage.getItem("qc_session")); }catch(e){}
       if(sess && sess.exp>Date.now() && emp(sess.id)?.active){ startSession(sess.id,true); goMain(); return; }
     }
