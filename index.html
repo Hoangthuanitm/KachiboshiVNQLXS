@@ -1,0 +1,1872 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kachiboshi QC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;600;700&display=swap">
+<style>
+/* Layout: dải thương hiệu xanh than; công nhân dùng một cột cỡ điện thoại,
+   dashboard / phân công / danh mục mở rộng lưới 12 cột trên máy tính. Mỗi loại phiếu có màu nhận diện riêng. */
+:root{
+  --bg:#EEF1F6; --surface:#FFFFFF; --sunk:#E6EAF1; --line:#D8DEE7; --grid:#E9EDF3; --ink:#122033; --muted:#5B6879;
+  --brand:#0C2340; --brand-2:#183E69; --brand-ink:#FFFFFF; --brand-muted:#A9BCD6;
+  --accent:#1D5FAF; --accent-ink:#FFFFFF; --accent-soft:#E2ECF9;
+  --ok:#16784B; --ok-bg:#DFF3E7; --bad:#C42F27; --bad-bg:#FCE5E2; --warn:#975600; --warn-bg:#FFF0D1;
+  --stop:#7A8696; --stop-bg:#E6EAF1;
+  --c-kk:#6A46D3; --c-qccs:#0B8466; --c-iscs:#C0620B; --c-ispvc:#1F6CCF; --c-qtpvc:#B33A7E;
+  --f-ui:"Be Vietnam Pro","Noto Sans JP",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-jp:"Noto Sans JP","Be Vietnam Pro",system-ui,sans-serif;
+  --r:16px; --tap:60px; --shadow:0 1px 2px rgb(12 35 64/.05),0 6px 18px rgb(12 35 64/.06);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D131C; --surface:#161F2B; --sunk:#202B39; --line:#2C3949; --grid:#222D3B; --ink:#E6ECF3; --muted:#9AA7B7;
+  --brand:#0A1A2E; --brand-2:#17375C; --brand-ink:#F2F6FB; --brand-muted:#8EA4C2;
+  --accent:#6AA8EE; --accent-ink:#06121F; --accent-soft:#17304D;
+  --ok:#4BC488; --ok-bg:#123222; --bad:#FF7D71; --bad-bg:#3A1A17; --warn:#F2B24C; --warn-bg:#372A10;
+  --stop:#8592A3; --stop-bg:#222C39;
+  --c-kk:#7C5CE0; --c-qccs:#14936F; --c-iscs:#C46D1A; --c-ispvc:#2C78D6; --c-qtpvc:#BC4789;
+  --shadow:0 1px 2px rgb(0 0 0/.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D131C; --surface:#161F2B; --sunk:#202B39; --line:#2C3949; --grid:#222D3B; --ink:#E6ECF3; --muted:#9AA7B7;
+  --brand:#0A1A2E; --brand-2:#17375C; --brand-ink:#F2F6FB; --brand-muted:#8EA4C2;
+  --accent:#6AA8EE; --accent-ink:#06121F; --accent-soft:#17304D;
+  --ok:#4BC488; --ok-bg:#123222; --bad:#FF7D71; --bad-bg:#3A1A17; --warn:#F2B24C; --warn-bg:#372A10;
+  --stop:#8592A3; --stop-bg:#222C39;
+  --c-kk:#7C5CE0; --c-qccs:#14936F; --c-iscs:#C46D1A; --c-ispvc:#2C78D6; --c-qtpvc:#BC4789;
+  --shadow:0 1px 2px rgb(0 0 0/.3); color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+html[lang="ja"] body{font-family:var(--f-jp)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:disabled{cursor:default}
+input,textarea,select{font:inherit;color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+svg.i{width:1.2em;height:1.2em;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- header ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--brand);color:var(--brand-ink)}
+.top-in{max-width:var(--maxw,600px);margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:10px;min-height:64px}
+.logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#2C7BD8,#0E4A8F);display:grid;place-items:center;font-weight:800;font-size:20px;color:#fff;flex:none;box-shadow:inset 0 0 0 1px rgb(255 255 255/.2)}
+.brand{flex:1;min-width:0;line-height:1.15}
+.brand b{display:block;font-size:15px;letter-spacing:.08em;font-weight:800}
+.brand span{font-size:12.5px;color:var(--brand-muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand h1{margin:0;font-size:18px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbtn{height:42px;min-width:42px;padding:0 12px;border-radius:11px;background:rgb(255 255 255/.1);color:var(--brand-ink);font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none}
+.tbtn:hover{background:rgb(255 255 255/.18)}
+.tbtn .nm{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:420px){.tbtn .nm{display:none}}
+.ava{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;flex:none}
+.ava svg{width:17px;height:17px}
+.tabs{max-width:var(--maxw,600px);margin:0 auto;padding:0 12px 8px;display:flex;gap:4px;overflow-x:auto}
+.tabs button{flex:1;min-height:42px;border-radius:10px;font-weight:600;font-size:14.5px;color:var(--brand-muted);display:flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;padding:0 10px}
+.tabs button[aria-selected="true"]{background:var(--brand-2);color:var(--brand-ink)}
+@media (max-width:460px){.tabs button svg{display:none}.tabs button{font-size:13.5px;padding:0 6px}}
+
+#app{max-width:var(--maxw,600px);margin:0 auto;padding-inline:16px;padding-block:16px 130px}
+body.wide{--maxw:1180px}
+
+.banner{display:flex;gap:10px;align-items:flex-start;background:var(--warn-bg);color:var(--warn);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:500;margin-bottom:14px}
+.label{font-size:12.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:24px 2px 10px;display:flex;align-items:center;gap:8px}
+.muted{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0;box-shadow:var(--shadow)}
+.card h3{margin:0 0 12px;font-size:15.5px;display:flex;align-items:center;gap:10px}
+.card h3 .sub{margin-left:auto;font-size:12.5px;font-weight:500;color:var(--muted)}
+.fi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;color:#fff}
+.fi svg{width:19px;height:19px}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:var(--r);padding:24px;text-align:center;color:var(--muted)}
+
+/* ---------- login ---------- */
+.login{max-width:420px;margin:24px auto 0;display:grid;gap:16px}
+.login .card{padding:24px;display:grid;gap:14px}
+.login h2{margin:0;font-size:24px}
+.lfield{display:grid;gap:6px}
+.lfield span{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.03em}
+.lfield input{height:56px;border-radius:13px;border:2px solid var(--line);background:var(--bg);padding:0 16px;font-size:19px;font-weight:600;width:100%}
+.lfield input:focus{border-color:var(--accent);outline:none}
+.pwrap{position:relative}
+.pwrap button{position:absolute;right:6px;top:6px;height:44px;width:48px;border-radius:10px;color:var(--muted);display:grid;place-items:center}
+.check{display:flex;align-items:center;gap:10px;font-size:15px;min-height:44px}
+.check input{width:22px;height:22px;accent-color:var(--accent)}
+.big{min-height:58px;border-radius:14px;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:18px;letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
+.hint{font-size:13.5px;color:var(--muted);text-align:center}
+
+/* ---------- my tasks ---------- */
+.hello{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;box-shadow:var(--shadow)}
+.hello-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.hello-top b{font-size:20px}
+.prog{height:10px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ok);border-radius:999px}
+.tasks{display:grid;gap:12px}
+.task{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.task-h b{font-size:20px}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.slot{min-height:66px;border-radius:12px;padding:8px 12px;text-align:left;display:flex;flex-direction:column;justify-content:center;font-weight:800;font-size:17px;border:2px solid transparent}
+.slot small{font-weight:600;font-size:12.5px;opacity:.9}
+.s-todo{background:var(--accent);color:var(--accent-ink)}
+.s-wait{background:var(--sunk);color:var(--muted)}
+.s-late{background:var(--warn-bg);color:var(--warn);border-color:var(--warn)}
+.s-OK{background:var(--ok-bg);color:var(--ok)}
+.s-X{background:var(--bad-bg);color:var(--bad);border-color:var(--bad)}
+.s-STOP{background:var(--stop-bg);color:var(--stop)}
+
+/* ---------- form ---------- */
+.fhead{border-radius:var(--r);padding:16px;color:#fff;display:flex;align-items:center;gap:14px}
+.fhead .fi{background:rgb(255 255 255/.2);width:46px;height:46px;border-radius:13px}
+.fhead .fi svg{width:24px;height:24px}
+.fhead b{display:block;font-size:22px;line-height:1.15}
+.fhead span{font-size:14px;opacity:.92}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;min-height:52px;border-radius:12px;background:var(--surface);border:2px solid var(--line);font-weight:700;font-size:15.5px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px;padding:4px 6px}
+.seg button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.seg button.st-broken[aria-pressed="true"]{border-color:var(--bad);color:var(--bad);background:var(--bad-bg)}
+.seg button.st-off[aria-pressed="true"]{border-color:var(--stop);color:var(--stop);background:var(--stop-bg)}
+.pick{width:100%;min-height:var(--tap);background:var(--surface);border:2px dashed var(--line);border-radius:14px;font-size:18px;font-weight:700;text-align:left;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pick.set{border-style:solid;border-color:var(--accent)}
+.pick.need{border-color:var(--bad);color:var(--bad);background:var(--bad-bg)}
+.stack{display:grid;gap:10px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:12px;box-shadow:var(--shadow)}
+.item.isX{border:2px solid var(--bad)}
+.item-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.item-name{flex:1;min-width:150px;font-size:18px;font-weight:700;line-height:1.25}
+.item-name small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.okx{display:flex;gap:8px}
+.okx button{width:86px;height:var(--tap);border-radius:12px;font-size:19px;font-weight:800;background:var(--sunk);color:var(--muted);display:flex;align-items:center;justify-content:center;gap:4px}
+.okx button.ok[aria-pressed="true"]{background:var(--ok);color:#fff}
+.okx button.x[aria-pressed="true"]{background:var(--bad);color:#fff}
+.pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pos button{min-height:var(--tap);border-radius:12px;font-weight:800;font-size:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;gap:2px}
+.pos button small{font-size:12px;font-weight:600;opacity:.9}
+.pos button[data-v="OK"]{background:var(--ok-bg);color:var(--ok)}
+.pos button[data-v="X"]{background:var(--bad);color:#fff}
+.xbox{display:grid;gap:10px;border-top:1px dashed var(--line);padding-top:12px}
+.notify{display:flex;gap:8px;align-items:center;font-size:14px;font-weight:700;color:var(--bad);background:var(--bad-bg);border-radius:10px;padding:8px 12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:46px;padding:8px 14px;border-radius:999px;background:var(--sunk);font-weight:600;font-size:15px;border:2px solid transparent}
+.chip[aria-pressed="true"]{background:var(--bad-bg);color:var(--bad);border-color:var(--bad)}
+.note{width:100%;min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:12px;font-size:16px;resize:vertical}
+.meas{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
+.meas input{flex:1;min-width:0;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:16px;font-variant-numeric:tabular-nums}
+.addl2{width:100%;min-height:56px;border-radius:14px;border:2px dashed var(--accent);font-weight:700;font-size:17px;color:var(--accent);display:flex;align-items:center;justify-content:center;gap:8px}
+.l2row{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.l2row b{flex:1;min-width:0}
+.l2row span{font-variant-numeric:tabular-nums;font-weight:800;color:var(--warn)}
+.del{width:44px;height:44px;border-radius:10px;background:var(--sunk);color:var(--muted);display:grid;place-items:center}
+.savebar{position:fixed;left:0;right:0;bottom:0;z-index:9;background:var(--surface);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 20px rgb(12 35 64/.08)}
+.savebar button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:568px;margin:0 auto;min-height:62px;border-radius:16px;background:var(--accent);color:var(--accent-ink);font-size:21px;font-weight:800;letter-spacing:.05em}
+.err{color:var(--bad);font-weight:700;font-size:14px;text-align:center;margin:0 0 8px}
+
+/* ---------- sheet ---------- */
+.scrim{position:fixed;inset:0;background:rgb(8 16 28/.55);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--surface);width:100%;max-width:600px;max-height:88%;overflow:auto;border-radius:22px 22px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom,0px));display:grid;gap:12px;align-content:start}
+.sheet-h{display:flex;align-items:center;gap:10px}
+.sheet-h b{flex:1;font-size:19px;display:flex;align-items:center;gap:8px}
+.x-btn{width:44px;height:44px;border-radius:12px;background:var(--sunk);display:grid;place-items:center;flex:none}
+.search{width:100%;height:52px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 14px;font-size:17px}
+.opts{display:grid;gap:8px}
+.opt{min-height:54px;border-radius:12px;background:var(--sunk);text-align:left;padding:8px 14px;font-weight:600;font-size:17px}
+.opt small{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.opt.cur{background:var(--accent);color:var(--accent-ink)}
+.opt.cur small{color:var(--accent-ink)}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:64px;height:64px;border-radius:14px;background:var(--sunk);font-size:30px;font-weight:700}
+.stepper input{flex:1;min-width:0;height:64px;text-align:center;font-size:30px;font-weight:800;border-radius:14px;border:2px solid var(--line);background:var(--bg);font-variant-numeric:tabular-nums}
+.primary{min-height:48px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:15.5px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.ghost{min-height:44px;border-radius:11px;background:var(--sunk);font-weight:600;padding:0 14px;display:inline-flex;align-items:center;gap:8px;font-size:14.5px}
+.danger{color:var(--bad)}
+.me-card{display:flex;gap:14px;align-items:center;background:var(--bg);border-radius:14px;padding:14px}
+.me-card .ava{width:52px;height:52px;font-size:18px}
+
+/* ---------- dashboard ---------- */
+.dhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.dhead h2{margin:0;font-size:22px;flex:1;min-width:200px;text-wrap:balance}
+.dhead h2 small{display:block;font-size:13px;font-weight:500;color:var(--muted)}
+.datenav{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px}
+.datenav b{min-width:112px;text-align:center;font-size:15.5px;font-variant-numeric:tabular-nums}
+.nbtn{width:38px;height:38px;border-radius:9px;display:grid;place-items:center}
+.nbtn:hover:not(:disabled){background:var(--sunk)}
+.nbtn:disabled{opacity:.3}
+.dgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.span3{grid-column:span 3}.span4{grid-column:span 4}.span5{grid-column:span 5}.span7{grid-column:span 7}.span8{grid-column:span 8}.span6{grid-column:span 6}.span12{grid-column:span 12}
+@media (max-width:1000px){.span3{grid-column:span 6}.span4,.span5,.span7,.span8{grid-column:span 12}}
+@media (max-width:560px){.span3,.span6{grid-column:span 12}}
+.kpi{display:grid;gap:6px;align-content:start}
+.kpi-top{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted)}
+.kpi-top .ki{width:28px;height:28px;border-radius:8px;display:grid;place-items:center}
+.kpi-top .ki svg{width:16px;height:16px}
+.kpi-val{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.kpi-val b{font-size:32px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi-val span{font-size:13px;color:var(--muted)}
+.delta{font-size:12.5px;font-weight:700;padding:2px 8px;border-radius:999px}
+.d-good{background:var(--ok-bg);color:var(--ok)} .d-bad{background:var(--bad-bg);color:var(--bad)} .d-flat{background:var(--sunk);color:var(--muted)}
+.spark{width:100%;height:38px;display:block}
+.fprog{display:grid;gap:16px}
+.frow{display:grid;gap:8px}
+.frow-h{display:flex;align-items:center;gap:10px}
+.frow-h b{flex:1;font-size:15px;min-width:0}
+.frow-h .cnt{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.frow-h .cnt b{color:var(--ink);font-size:15px}
+.sbar{display:flex;gap:2px;height:12px;border-radius:999px;background:var(--sunk);overflow:hidden}
+.sbar i{display:block;height:100%}
+.sbar .g{background:var(--ok)} .sbar .r{background:var(--bad)} .sbar .s{background:var(--stop)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.mtx{width:100%;border-collapse:separate;border-spacing:0 4px;font-size:13.5px}
+.mtx td{padding:0 4px;border:0}
+.mtx td:first-child{color:var(--muted);font-weight:600;white-space:nowrap;width:1%;padding-right:10px}
+.pill{display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 10px;border-radius:8px;font-size:12.5px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;width:100%;justify-content:flex-start}
+.pill svg{width:14px;height:14px}
+.p-OK{background:var(--ok-bg);color:var(--ok)} .p-X{background:var(--bad-bg);color:var(--bad)} .p-STOP{background:var(--stop-bg);color:var(--stop)}
+.p-late{background:transparent;color:var(--warn);box-shadow:inset 0 0 0 1px var(--line)}
+.p-wait,.p-todo{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1.5px var(--line)}
+.feed{display:grid}
+.issue{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;padding:11px 0;border-bottom:1px solid var(--line);text-align:left;width:100%}
+.issue:last-child{border-bottom:0}
+.issue .dot{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--bad-bg);color:var(--bad);grid-row:span 3}
+.issue .dot svg{width:15px;height:15px}
+.issue b{font-size:14.5px}
+.issue .meta{font-size:12.5px;color:var(--muted)}
+.chart{width:100%;height:auto;display:block}
+.chart text{font-family:var(--f-ui);font-size:11px;fill:var(--muted)}
+.pareto{display:grid;gap:9px}
+.prow{display:grid;grid-template-columns:minmax(90px,38%) 1fr auto;align-items:center;gap:10px;font-size:13.5px}
+.prow .bar{height:12px;background:var(--sunk);border-radius:999px;overflow:hidden}
+.prow .bar i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.prow b{font-variant-numeric:tabular-nums;min-width:56px;text-align:right}
+.ptable{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.ptable th{text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ptable td{padding:9px 8px;border-bottom:1px solid var(--line)}
+.ptable tr:last-child td{border-bottom:0}
+.ptable .num{text-align:right}
+.who{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.who .ava{width:26px;height:26px;font-size:10.5px}
+.mini{height:6px;border-radius:999px;background:var(--sunk);overflow:hidden;min-width:60px}
+.mini i{display:block;height:100%;background:var(--ok)}
+.tbl-wrap{overflow-x:auto}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.b-ok{background:var(--ok-bg);color:var(--ok)} .b-bad{background:var(--bad-bg);color:var(--bad)} .b-stop{background:var(--stop-bg);color:var(--stop)} .b-wait{background:var(--sunk);color:var(--muted)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#tip{position:fixed;z-index:40;pointer-events:none;background:var(--ink);color:var(--surface);font-size:12.5px;font-weight:600;padding:6px 10px;border-radius:8px;max-width:240px;box-shadow:0 6px 18px rgb(0 0 0/.25);white-space:pre-line}
+
+/* ---------- assign ---------- */
+.atool{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.mchips{display:flex;flex-wrap:wrap;gap:8px}
+.mchip{min-height:42px;padding:6px 14px;border-radius:999px;border:2px solid var(--line);font-weight:600;font-size:14px;background:var(--surface)}
+.mchip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:14px}
+.amach{border-top:1px solid var(--line);padding:12px 0 4px;display:grid;gap:8px}
+.amach:first-of-type{border-top:0;padding-top:0}
+.amach > b{font-size:15.5px}
+.arow{display:flex;align-items:center;gap:10px}
+.arow > span{min-width:96px;font-size:13.5px;color:var(--muted);font-weight:600}
+.arow select{flex:1;min-width:0;height:46px;border-radius:11px;border:2px solid var(--line);background:var(--surface);padding:0 10px;font-weight:600}
+.arow select.set{border-color:var(--accent);background:var(--accent-soft)}
+.arow .badge{flex:none}
+.quick{display:flex;gap:8px;flex-wrap:wrap;background:var(--bg);border-radius:12px;padding:10px;margin-bottom:12px;align-items:center}
+.quick select{flex:1;min-width:140px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 8px}
+
+/* ---------- week / confirm / dashboard v4 ---------- */
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-bottom:14px}
+.wday{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 4px;display:grid;gap:2px;justify-items:center;min-height:72px}
+.wday small{font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.wday b{font-size:15px;font-variant-numeric:tabular-nums}
+.wday[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.wday.past{opacity:.6}
+.wcnt{font-size:11px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.wcnt.full{color:var(--ok)} .wcnt.part{color:var(--warn)}
+@media (max-width:440px){.week{gap:4px}.wday{padding:6px 2px}.wday b{font-size:13px}.wcnt{font-size:10px}}
+.rev{display:grid;gap:12px;margin-top:8px}
+.revcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);display:grid;gap:10px}
+.revcard-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.revcard-h b{font-size:18px;flex:1}
+.revrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:var(--bg);text-align:left;width:100%}
+.revrow .nm{font-weight:700;min-width:120px;flex:1}
+.revrow .cnt{font-size:13.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px}
+.cstats div{display:grid;gap:2px}
+.cstats b{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.cstats span{font-size:12.5px;color:var(--muted);font-weight:600}
+.b-warn{background:var(--warn-bg);color:var(--warn)}
+.badge svg{width:14px;height:14px}
+.crow tbody tr:hover td{background:var(--bg)}
+.dfil{display:grid}
+.dfil-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.dfil-row .fld{flex:0 1 190px}
+.dfil-row input[type=month]{height:46px;border-radius:11px;border:1px solid var(--line);background:var(--surface);padding:0 12px;font-size:16px;font-weight:600}
+.dfil-foot{margin-top:12px;min-height:30px;display:flex;align-items:center}
+.fchip{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:14px}
+.kpis5{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:12px;margin-top:14px}
+.kpi{display:grid;gap:4px;align-content:start}
+.kpi-t{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.kpi-big{font-size:34px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi-sub{font-size:13.5px;color:var(--muted)}
+.kpi-cmp{font-size:12.5px;margin-top:4px}
+.csub{margin:-6px 0 12px;font-size:13px;color:var(--muted)}
+.mini-h{font-size:12.5px;font-weight:700;color:var(--muted);margin:2px 0 2px}
+.hb{display:grid;gap:4px}
+.hb-row{display:grid;grid-template-columns:minmax(110px,40%) 1fr auto;gap:10px;align-items:center;text-align:left;padding:6px 8px;border-radius:9px;font-size:14px}
+.hb-row:hover{background:var(--bg)}
+.hb-row.on{background:var(--accent-soft);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.hb-l{display:flex;align-items:center;gap:8px;min-width:0}
+.hb-l > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb-l .fi{width:22px;height:22px;border-radius:6px}
+.hb-l .fi svg{width:13px;height:13px}
+.hb-bar{height:12px;background:var(--sunk);border-radius:999px;overflow:hidden}
+.hb-bar i{display:block;height:100%;border-radius:999px}
+.hb-v{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;min-width:64px}
+.hb-v small{display:block;font-size:11.5px;color:var(--muted)}
+.heat text{font-family:var(--f-ui);font-size:11px;fill:var(--muted)}
+.ptable tr.on td{background:var(--accent-soft)}
+.ptable tbody tr[data-act]:hover td{background:var(--bg)}
+.closebox{display:grid;gap:8px;background:var(--bad-bg);border-radius:12px;padding:12px}
+.closebox textarea{width:100%;min-height:64px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:10px;font-size:15px}
+
+/* ---------- admin ---------- */
+.adm{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
+.adm-nav{display:grid;gap:4px;position:sticky;top:132px}
+.adm-nav button{display:flex;align-items:center;gap:10px;min-height:46px;border-radius:11px;padding:0 12px;font-weight:600;color:var(--muted);text-align:left;border:1px solid transparent}
+.adm-nav button[aria-current="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);border-color:var(--line)}
+.adm-nav button span{margin-left:auto;font-size:12px;font-variant-numeric:tabular-nums}
+@media (max-width:760px){.adm{grid-template-columns:minmax(0,1fr)}.adm-nav{position:static;display:flex;overflow-x:auto;padding-bottom:4px}.adm-nav button{white-space:nowrap;flex:none}.adm-nav button span{display:none}}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.toolbar input{flex:1;min-width:160px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--bg);padding:0 12px}
+.addbox{background:var(--accent-soft);border-radius:14px;padding:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:6px}
+.fld{display:grid;gap:4px;flex:1;min-width:120px}
+.fld span{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.03em}
+.fld input,.fld select{height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 10px;width:100%;min-width:0}
+.ed{height:40px;border-radius:9px;border:1px solid transparent;background:transparent;padding:0 8px;width:100%;min-width:0}
+select.ed{min-width:130px}
+.ed:hover{border-color:var(--line)}
+.ed:focus{background:var(--surface);border-color:var(--accent)}
+table.cat{border-collapse:collapse;width:100%;font-size:14px}
+table.cat th{text-align:left;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:6px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.cat td{padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.cat tr.off td{opacity:.5}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;color:var(--muted);white-space:nowrap}
+.sw{width:48px;height:28px;border-radius:999px;background:var(--sunk);position:relative;border:1px solid var(--line);flex:none;display:block}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--muted);transition:left .15s}
+.sw[aria-checked="true"]{background:var(--ok);border-color:var(--ok)}
+.sw[aria-checked="true"]::after{left:23px;background:#fff}
+.warnline{color:var(--bad);font-size:13.5px;font-weight:600;min-height:20px;margin-bottom:8px}
+.setblock{border-top:1px solid var(--line);padding-top:16px}
+.setblock:first-child{border-top:0;padding-top:0}
+
+.toast{position:fixed;left:50%;bottom:112px;transform:translateX(-50%);background:var(--ok);color:#fff;font-weight:800;font-size:17px;padding:13px 24px;border-radius:999px;z-index:30;box-shadow:0 8px 24px rgb(0 0 0/.25);display:flex;gap:8px;align-items:center;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:no-preference){.toast{animation:pop .25s ease-out}@keyframes pop{from{transform:translate(-50%,18px);opacity:0}}}
+</style>
+<style>body{margin:0}</style>
+</head>
+<body>
+
+
+<header class="top" id="top"></header>
+<main id="app"></main>
+<div id="sheet"></div>
+<div id="tip" hidden></div>
+<input type="file" id="impfile" accept=".json,application/json" hidden>
+
+<script>
+/* ===================== BIỂU TƯỢNG ===================== */
+const IC = {
+  needle:'<path d="M4 20 18 6"/><path d="M15 3l6 6"/><path d="M7 14l3 3"/>',
+  glove:'<path d="M7 21v-6l-3-4a1.5 1.5 0 0 1 2.4-1.8L8 11V5a1.5 1.5 0 0 1 3 0v5V4a1.5 1.5 0 0 1 3 0v6V5.5a1.5 1.5 0 0 1 3 0V14c0 3-2 5-3 7"/>',
+  therm:'<path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0z"/><path d="M12 9v6"/>',
+  printer:'<rect x="6" y="3" width="12" height="6" rx="1"/><rect x="3" y="9" width="18" height="8" rx="2"/><rect x="7" y="14" width="10" height="7" rx="1"/>',
+  flow:'<rect x="3" y="4" width="6" height="6" rx="1.5"/><rect x="15" y="14" width="6" height="6" rx="1.5"/><path d="M6 10v4a3 3 0 0 0 3 3h6"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>', x:'<path d="M6 6l12 12M18 6 6 18"/>', minus:'<path d="M6 12h12"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>', next:'<path d="M9 5l7 7-7 7"/>', plus:'<path d="M12 5v14M5 12h14"/>',
+  alert:'<path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17.5v.5"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6h.01M4 12h.01M4 18h.01"/>', chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',
+  box:'<path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>', users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
+  bug:'<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/>', factory:'<path d="M2 20V10l6 4V10l6 4V6h6v14z"/><path d="M2 20h20"/>',
+  doc:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  save:'<path d="M5 3h11l3 3v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/>',
+  download:'<path d="M12 4v11M7 10l5 5 5-5M4 20h16"/>', upload:'<path d="M12 20V9M7 14l5-5 5 5M4 4h16"/>',
+  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  logout:'<path d="M15 4h4v16h-4M10 17l5-5-5-5M15 12H3"/>', login:'<path d="M9 4H5v16h4M14 17l5-5-5-5M19 12H7"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', copy:'<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h4"/>',
+  trend:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>', pct:'<path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>'
+};
+const ico = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||""}</svg>`;
+
+/* ===================== DANH MỤC MẶC ĐỊNH ===================== */
+const DEPTS = {KK:{vi:"Kiểm kim",jp:"検針",forms:["KK"],c:"#6A46D3"},CSQC:{vi:"QC cao su",jp:"ゴム品質",forms:["QCCS"],c:"#0B8466"},
+  CSMAY:{vi:"Máy in sấy cao su",jp:"ゴム印刷機",forms:["ISCS"],c:"#C0620B"},PVC:{vi:"PVC",jp:"PVC",forms:["ISPVC","QTPVC"],c:"#1F6CCF"},
+  CD:{vi:"Cơ điện",jp:"電気・機械",forms:[],c:"#5B6879"},QL:{vi:"Quản lý",jp:"管理",forms:[],c:"#183E69"}};
+const ROLES = {CN:{vi:"Công nhân",jp:"作業者"},TT:{vi:"Tổ trưởng",jp:"班長"},CD:{vi:"Cơ điện",jp:"電気・機械"},QL:{vi:"Quản lý",jp:"管理者"},AD:{vi:"Admin",jp:"システム管理者"}};
+const PTYPES = {"":{vi:"Dùng chung",jp:"共通"},CS:{vi:"Cao su",jp:"ゴム"},PVC:{vi:"PVC",jp:"PVC"}};
+const ACTS = [{id:"A1",vi:"Đã báo tổ trưởng",jp:"班長に報告済"},{id:"A2",vi:"Đã báo cơ điện",jp:"電気・機械に報告済"},{id:"A3",vi:"Đã dừng máy",jp:"機械を停止"},{id:"A4",vi:"Đã chỉnh lại",jp:"調整済"}];
+const POSN = {T:{vi:"Trái",jp:"左"},G:{vi:"Giữa",jp:"中"},P:{vi:"Phải",jp:"右"}};
+const FORM_ORDER = ["KK","QCCS","ISCS","ISPVC","QTPVC"];
+const DEFAULT_PW = "1234";
+
+const DEFAULT_MASTER = {
+  employees:[
+    ["ADMIN","Admin","QL","AD"],["NV001","Phúc","KK","CN"],["NV002","Ngô Lập Quốc","KK","TT"],
+    ["NV003","Hằng","CSQC","CN"],["NV004","Hạnh","CSQC","CN"],["NV005","Lang","CSQC","CN"],["NV006","Phạm Bảo Chinh","CSQC","TT"],
+    ["NV007","Huy","CSMAY","CN"],["NV008","Chinh","CSMAY","CN"],
+    ["NV009","Hướng","PVC","CN"],["NV010","Biển","PVC","CN"],["NV011","Cam","PVC","CN"],["NV012","Sỹ","PVC","CN"],["NV013","Minh","PVC","CN"],["NV014","Việt","PVC","CN"],
+    ["NV015","Sơn","PVC","CN"],["NV016","Long","PVC","CN"],["NV017","Dũng Em","PVC","CN"],["NV018","Toàn","PVC","CN"],["NV019","Trần Xuân Mỹ","PVC","QL"],
+    ["NV020","Vinh","CD","CD"],["NV021","Thi","CD","CD"]
+  ].map(e=>({id:e[0],name:e[1],dept:e[2],role:e[3],active:true})),
+  products:[["Kusumi nam xanh","Kusumi, Kumi, Ku"],["Kusumi nam đen","Kusumi, Kumi, Ku"],["Kusumi nữ xanh","Kusumi, Kumi, Ku"],["Kusumi nữ hồng","Kusumi, Kumi, Ku"],
+    ["Dunlop nam",""],["Dunlop nữ đỏ",""],["Gantex nam",""],["Gantex hard",""],["Poly Touden","Touden, Tou den"],["Poly",""],["Cotton","Cot, Coton"],
+    ["Cotton Fit nam","Cot fit, Coton fit"],["Cotton Fit nữ","Cot fit, Coton fit"],["Sagawa nam",""],["Sagawa nữ",""],["15G NKF M","NKF"],["15G NKF S","NKF"],
+    ["Acrylic nữ",""],["Good nữ",""],["Joshin",""],["Kinari",""],["Kimori",""],["Junior",""],["TC Kombau","Kombau"]]
+    .map((p,i)=>({id:"SP"+String(i+1).padStart(3,"0"),name:p[0],aliases:p[1],type:"",active:true})),
+  errors:[["Rách nhỏ","小さな破れ",""],["Rách đầu ngón","指先の破れ",""],["Rách bo","袖口の破れ",""],["Bo lèo","袖口の変形",""],["Dơ","汚れ",""],["Lem keo","糊のはみ出し",""],
+    ["Dăm bông","綿くず",""],["Lỗi sợi / mất sợi","糸不良",""],["Bỏ mũi","目飛び",""],["Viền sờ","縁の不良",""],["Chưng khuôn","型不良",""],["Lỗi in / hạt PVC","印刷不良・PVC粒","PVC"],["Khác","その他",""]]
+    .map((e,i)=>({id:"L"+String(i+1).padStart(2,"0"),vi:e[0],jp:e[1],type:e[2],active:true})),
+  machines:[["KK01","Máy kiểm kim","検針機"],["CS1","Cao su 1","ゴム 1"],["CS2","Cao su 2","ゴム 2"],["CS3","Cao su 3","ゴム 3"],
+    ["PVC1","PVC 1","PVC 1"],["PVC2","PVC 2","PVC 2"],["PVC3","PVC 3","PVC 3"],["PVCTD","PVC tự động","PVC 自動"]]
+    .map(m=>({id:m[0],vi:m[1],jp:m[2],active:true})),
+  forms:{
+    KK:{vi:"Máy kiểm kim",jp:"検針機点検",icon:"needle",hue:"--c-kk",ptype:"",machines:["KK01"],product:false,loai2:false,pos:true,chips:"act",
+        slots:[{t:"07:30"},{t:"13:00"}],
+        items:[{c:"cam_bien",vi:"Độ cảm biến",jp:"感度"},{c:"toc_do",vi:"Tốc độ máy",jp:"機械速度"},{c:"am_bao",vi:"Âm báo + thời gian báo",jp:"警報音・警報時間"}]},
+    QCCS:{vi:"Chất lượng SP cao su",jp:"ゴム製品品質検査",icon:"glove",hue:"--c-qccs",ptype:"CS",machines:["CS1","CS2","CS3"],product:"req",loai2:true,chips:"err",
+        slots:[{t:"08:10"},{t:"13:20"}],
+        items:[{c:"kich_thuoc",vi:"Kích thước",jp:"サイズ"},{c:"deo_thu",vi:"Đeo thử",jp:"試着"},{c:"lop_cao_su",vi:"Chất lượng lớp cao su",jp:"ゴム層の品質"}]},
+    ISCS:{vi:"Máy in sấy cao su",jp:"ゴム印刷乾燥機",icon:"therm",hue:"--c-iscs",ptype:"CS",machines:["CS1","CS2","CS3"],product:"opt",loai2:false,chips:"act",
+        slots:[{t:"07:30"},{t:"13:00"}],
+        items:[{c:"nhiet_do",vi:"Nhiệt độ",jp:"温度",meas:true},{c:"toc_do_bc",vi:"Tốc độ băng chuyền",jp:"コンベア速度",meas:true}]},
+    ISPVC:{vi:"Máy in sấy PVC",jp:"PVC印刷乾燥機",icon:"printer",hue:"--c-ispvc",ptype:"PVC",machines:["PVC1","PVC2","PVC3","PVCTD"],product:"opt",loai2:false,chips:"act",
+        slots:[{t:"07:30"},{t:"13:00"}],
+        items:[{c:"nhiet_do",vi:"Nhiệt độ",jp:"温度",meas:true},{c:"toc_do_bc",vi:"Tốc độ băng chuyền",jp:"コンベア速度",meas:true}]},
+    QTPVC:{vi:"Quy trình in PVC hằng ngày",jp:"PVC日常品質管理",icon:"flow",hue:"--c-qtpvc",ptype:"PVC",machines:["PVC1","PVC2","PVC3","PVCTD"],product:"req",loai2:true,chips:"act",
+        slots:[{t:"06:15",vi:"Đầu ca",jp:"始業"}],
+        items:[{c:"mo_may",vi:"Mở máy (6h15)",jp:"機械起動 (6:15)"},{c:"ve_sinh",vi:"Vệ sinh máy",jp:"機械清掃"},{c:"nong_khuon",vi:"Làm nóng khuôn",jp:"型の予熱"},
+               {c:"chay_mau",vi:"Chạy mẫu loại 2 (2 đôi)",jp:"二級品で試運転 (2双)"},{c:"hat_pvc",vi:"Kiểm hạt PVC",jp:"PVC粒の確認"},{c:"do_bong",vi:"Độ bóng",jp:"光沢"}]}
+  }
+};
+const clone = o => JSON.parse(JSON.stringify(o));
+function mergeMaster(m){
+  const d = clone(DEFAULT_MASTER);
+  if(!m) return d;
+  const out = {...d, ...clone(m)};
+  delete out.adminPin;
+  ["employees","products","errors","machines"].forEach(k=>{ if(!Array.isArray(out[k])) out[k]=d[k]; });
+  out.forms = {...d.forms, ...(out.forms||{})};
+  FORM_ORDER.forEach(f=>{ out.forms[f] = {...d.forms[f], ...(out.forms[f]||{})}; });
+  out.products.forEach(p=>{ p.aliases ??= ""; p.type ??= ""; });
+  out.errors.forEach(e=>{ e.type ??= ""; });
+  if(!out.employees.some(e=>e.role==="AD"&&e.active)) out.employees.unshift(d.employees[0]);
+  return out;
+}
+
+/* ===================== NGÔN NGỮ ===================== */
+const TX = {
+  vi:{app:"Quản lý chất lượng sản phẩm",change:"Tài khoản",today:"Hôm nay",tomorrow:"Ngày mai",slot:"Lần",
+      login:"Đăng nhập",loginSub:"Dùng mã nhân viên và mật khẩu của bạn",empId:"Mã nhân viên",password:"Mật khẩu",remember:"Ghi nhớ trên điện thoại này",
+      loginBtn:"ĐĂNG NHẬP",badLogin:"Sai mã nhân viên hoặc mật khẩu",inactive:"Tài khoản đã bị khoá. Liên hệ Admin.",tooMany:"Sai quá nhiều lần. Thử lại sau 30 giây.",
+      forgot:"Quên mật khẩu? Báo tổ trưởng hoặc Admin để đặt lại.",firstPw:"Đặt mật khẩu mới",firstPwSub:"Đây là lần đầu đăng nhập. Hãy đặt mật khẩu riêng, không cho người khác biết.",
+      newPw:"Mật khẩu mới",confirmPw:"Nhập lại mật khẩu",pwShort:"Mật khẩu cần ít nhất 4 ký tự",pwMismatch:"Hai mật khẩu không giống nhau",pwDefault:"Không dùng lại mật khẩu mặc định",
+      savePw:"LƯU MẬT KHẨU",pwSaved:"Đã đổi mật khẩu",changePw:"Đổi mật khẩu",logout:"Đăng xuất",cancel:"Huỷ",
+      todo:"Cần kiểm",wait:"Chưa đến giờ",late:"Trễ giờ",OK:"Đạt",X:"Không đạt",STOP:"Không chạy",progress:"lượt đã kiểm",missing:"Thiếu",
+      myWork:"Việc của tôi hôm nay",notAssigned:"Hôm nay bạn chưa được phân công kiểm tra.",askLead:"Liên hệ tổ trưởng",
+      status:"Tình trạng máy",run:"Chạy",broken:"Hỏng",off:"Không SX",product:"Mã hàng",chooseProduct:"Chạm để chọn mã hàng",
+      items:"Hạng mục kiểm tra",xWhat:"Chọn lỗi / việc đã làm",note:"Ghi chú (nếu cần)",notifyNow:"Báo ngay cho",
+      meas:"Số đo",l2:"Hàng loại 2",addL2:"Thêm hàng loại 2",chooseErr:"Chọn lỗi",qty:"Số lượng",pair:"đôi",dozen:"Tá",add:"Thêm",
+      save:"LƯU",saved:"Đã lưu",needProduct:"Chưa chọn mã hàng",needX:"Mục Không đạt: chọn lỗi hoặc ghi chú",
+      stopNote:"Máy không chạy nên không cần kiểm hạng mục. Ghi lý do nếu có.",search:"Gõ vài chữ để tìm…",
+      notMine:"Phiếu này do người khác nhập, bạn chỉ xem được.",
+      tInput:"Việc của tôi",tAssign:"Phân công",tSum:"Tổng quan",tCat:"Danh mục",
+      dash:"Tổng quan chất lượng",scopeAll:"Toàn nhà máy",
+      kDone:"Hoàn thành",kPass:"Tỷ lệ đạt",kX:"Mục không đạt",kL2:"Hàng loại 2",ofChecks:"lượt kiểm",ofItems:"hạng mục",vsYday:"so với hôm trước",
+      fProgress:"Tiến độ theo phiếu",trend:"Xu hướng 14 ngày",trendX:"Mục không đạt mỗi ngày",trendL2:"Hàng loại 2 mỗi ngày (đôi)",
+      issues:"Bất thường",noIssue:"Không có mục nào Không đạt trong ngày.",l2ByErr:"Loại 2 theo lỗi",l2ByProd:"Loại 2 theo mã hàng",
+      people:"Theo nhân viên",assigned:"Được giao",done:"Đã kiểm",unassigned:"Chưa phân công",noPeople:"Chưa có phân công cho ngày này.",
+      approve:"Xác nhận ngày",approved:"Đã xác nhận",by:"bởi",export:"Tải Excel (CSV) tháng",total:"Tổng",machine:"Máy",close:"Đóng",
+      legOK:"Đạt",legX:"Không đạt",legSTOP:"Máy không chạy",legLeft:"Chưa kiểm",
+      aTitle:"Phân công kiểm tra",aSub:"Chọn người kiểm cho từng máy và từng lần. Công nhân chỉ thấy việc được giao.",
+      aCount:"lượt đã phân công",aCopy:"Chép từ hôm trước",aClear:"Xoá phân công",aClearConfirm:"Bấm lần nữa để xoá",
+      aQuick:"Giao cả phiếu cho",aApply:"Áp dụng",nobody:"— Chưa giao —",aSaved:"Đã cập nhật phân công",aNothing:"Hôm trước chưa có phân công",
+      noDeptForms:"Bộ phận này không có phiếu kiểm.",
+      local:"Dữ liệu đang lưu trên thiết bị này. Admin nên sao lưu định kỳ trong Danh mục › Cài đặt.",
+      noData:"Chưa có phiếu nào trong ngày này.",saveErr:"Không lưu được. Kiểm tra mạng rồi bấm lại.",
+      cProducts:"Sản phẩm",cEmployees:"Nhân viên",cErrors:"Danh sách lỗi",cMachines:"Máy / chuyền",cForms:"Phiếu & hạng mục",cSettings:"Cài đặt & sao lưu",
+      code:"Mã",name:"Tên",aliases:"Tên gọi tắt",aliasPh:"Cách nhau bằng dấu phẩy",ptype:"Loại hàng",dept:"Bộ phận",role:"Vai trò",nameVi:"Tên tiếng Việt",nameJp:"Tên tiếng Nhật",
+      active:"Đang dùng",addNew:"Thêm",dup:"Đã có trong danh mục",need:"Nhập tên trước",findCat:"Tìm trong danh mục…",
+      catHelp:"Đây là nguồn duy nhất cho mọi lựa chọn trên phiếu. Sửa trực tiếp trong bảng. Tắt “Đang dùng” để ẩn, dữ liệu cũ vẫn giữ nguyên.",
+      empHelp:"Mã nhân viên là tên đăng nhập. Nhân viên mới có mật khẩu mặc định 1234 và phải đổi ở lần đăng nhập đầu.",
+      pwCol:"Mật khẩu",pwIsDefault:"Mặc định",pwIsSet:"Đã đặt",pwReset:"Đặt lại",pwResetDone:"Đã đặt lại mật khẩu về 1234",idOpt:"Mã (để trống: tự sinh)",
+      formMachines:"Máy áp dụng phiếu này",formSlots:"Giờ kiểm",formItems:"Hạng mục kiểm tra",hasMeas:"Ô số đo",
+      backup:"Tải file sao lưu",restore:"Nhập từ file sao lưu",backupTitle:"Sao lưu dữ liệu",backupHelp:"File sao lưu (JSON) chứa danh mục, phiếu kiểm, phân công và xác nhận. Không chứa mật khẩu.",
+      restored:"Đã nhập",records:"phiếu",badFile:"File sao lưu không hợp lệ",resetTitle:"Khôi phục mặc định",resetHelp:"Đưa danh mục về bản gốc lấy từ phiếu tháng 9. Phiếu kiểm đã nhập không bị xoá.",
+      resetCat:"Khôi phục danh mục mặc định",resetConfirm:"Bấm lần nữa để xác nhận",usedBy:"Dùng ở phiếu",lastAdmin:"Phải còn ít nhất một Admin",idTaken:"Mã này đã có"},
+  jp:{app:"製品品質管理",change:"アカウント",today:"今日",tomorrow:"明日",slot:"回",
+      login:"ログイン",loginSub:"社員コードとパスワードを入力",empId:"社員コード",password:"パスワード",remember:"この端末に記憶",
+      loginBtn:"ログイン",badLogin:"社員コードまたはパスワードが違います",inactive:"アカウントは無効です。管理者に連絡してください。",tooMany:"失敗が多すぎます。30秒後に再試行。",
+      forgot:"パスワードを忘れた場合は班長または管理者へ。",firstPw:"新しいパスワード",firstPwSub:"初回ログインです。自分だけのパスワードを設定してください。",
+      newPw:"新しいパスワード",confirmPw:"もう一度入力",pwShort:"4文字以上必要です",pwMismatch:"パスワードが一致しません",pwDefault:"初期パスワードは使えません",
+      savePw:"保存",pwSaved:"パスワードを変更しました",changePw:"パスワード変更",logout:"ログアウト",cancel:"キャンセル",
+      todo:"未点検",wait:"時間前",late:"遅れ",OK:"合格",X:"不合格",STOP:"停止",progress:"点検済",missing:"未点検",
+      myWork:"本日の担当",notAssigned:"本日の担当はまだありません。",askLead:"班長に連絡",
+      status:"機械の状態",run:"稼働",broken:"故障",off:"生産なし",product:"品番",chooseProduct:"タップして品番を選択",
+      items:"点検項目",xWhat:"不良内容・処置を選択",note:"備考（必要時）",notifyNow:"すぐ報告",
+      meas:"測定値",l2:"二級品",addL2:"二級品を追加",chooseErr:"不良を選択",qty:"数量",pair:"双",dozen:"ダース",add:"追加",
+      save:"保存",saved:"保存しました",needProduct:"品番が未選択です",needX:"不合格項目：不良を選ぶか備考を入力",
+      stopNote:"機械停止のため項目点検は不要です。理由があれば記入。",search:"検索…",
+      notMine:"他の人の記録です。閲覧のみ。",
+      tInput:"担当",tAssign:"割当",tSum:"概要",tCat:"マスタ",
+      dash:"品質ダッシュボード",scopeAll:"工場全体",
+      kDone:"完了率",kPass:"合格率",kX:"不合格項目",kL2:"二級品",ofChecks:"点検",ofItems:"項目",vsYday:"前日比",
+      fProgress:"点検表別の進捗",trend:"14日間の推移",trendX:"日別 不合格項目",trendL2:"日別 二級品（双）",
+      issues:"異常",noIssue:"本日の不合格はありません。",l2ByErr:"不良別 二級品",l2ByProd:"品番別 二級品",
+      people:"担当者別",assigned:"割当",done:"点検済",unassigned:"未割当",noPeople:"この日の割当はありません。",
+      approve:"本日を確認",approved:"確認済",by:"",export:"月次CSV (Excel)",total:"合計",machine:"機械",close:"閉じる",
+      legOK:"合格",legX:"不合格",legSTOP:"停止",legLeft:"未点検",
+      aTitle:"点検の割当",aSub:"機械・回ごとに担当者を選択。作業者には自分の担当だけが表示されます。",
+      aCount:"件割当済",aCopy:"前日をコピー",aClear:"割当をクリア",aClearConfirm:"もう一度押すとクリア",
+      aQuick:"点検表全体を割当",aApply:"適用",nobody:"— 未割当 —",aSaved:"割当を更新しました",aNothing:"前日の割当はありません",
+      noDeptForms:"この部署には点検表がありません。",
+      local:"データはこの端末に保存されています。マスタ › 設定で定期的にバックアップしてください。",
+      noData:"この日の記録はまだありません。",saveErr:"保存できません。通信を確認してください。",
+      cProducts:"製品",cEmployees:"従業員",cErrors:"不良リスト",cMachines:"機械・ライン",cForms:"点検表・項目",cSettings:"設定・バックアップ",
+      code:"コード",name:"名称",aliases:"略称",aliasPh:"カンマ区切り",ptype:"品種",dept:"部署",role:"役割",nameVi:"ベトナム語名",nameJp:"日本語名",
+      active:"使用中",addNew:"追加",dup:"既に登録済み",need:"名称を入力してください",findCat:"マスタ内を検索…",
+      catHelp:"点検表の全選択肢の元データです。表内で直接編集できます。「使用中」をオフにすると非表示、過去データは残ります。",
+      empHelp:"社員コードがログインIDです。新規社員の初期パスワードは1234で、初回ログイン時に変更が必要です。",
+      pwCol:"パスワード",pwIsDefault:"初期値",pwIsSet:"設定済",pwReset:"リセット",pwResetDone:"パスワードを1234に戻しました",idOpt:"コード（空欄で自動）",
+      formMachines:"対象機械",formSlots:"点検時刻",formItems:"点検項目",hasMeas:"測定値欄",
+      backup:"バックアップをダウンロード",restore:"バックアップから復元",backupTitle:"データのバックアップ",backupHelp:"マスタ・点検記録・割当・確認を含むJSON。パスワードは含みません。",
+      restored:"復元済",records:"件",badFile:"無効なバックアップファイル",resetTitle:"初期化",resetHelp:"マスタを9月の点検表から作成した初期状態に戻します。点検記録は削除されません。",
+      resetCat:"マスタを初期化",resetConfirm:"もう一度押すと初期化します",usedBy:"使用する点検表",lastAdmin:"管理者は最低1名必要です",idTaken:"このコードは使用中です"}
+};
+Object.assign(TX.vi,{
+  revTT:"Chờ bạn xác nhận", revAD:"Chờ Admin duyệt lần cuối", revNone:"Không có ngày nào đang chờ.", openConfirm:"Xem và xác nhận", waitLead:"Chờ tổ trưởng",
+  finalBtn:"Duyệt lần cuối ngày", finalDone:"Đã duyệt lần cuối", finalWait:"Còn {n} bộ phận chưa được tổ trưởng xác nhận", finalUndo:"Mở lại",
+  finalLocked:"Admin đã duyệt lần cuối. Chỉ Admin mở lại được.", checkedN:"đã kiểm", revSubAD:"Sau khi các tổ trưởng xác nhận xong, Admin duyệt lần cuối để khoá ngày.", revSubTT:"Kiểm tra kết quả của nhóm rồi xác nhận từng ngày.",
+  leadOK:"Tổ trưởng đã xác nhận", recentFinal:"Đã duyệt gần đây",
+  tConfirm:"Xác nhận", cTitle:"Xác nhận kết quả kiểm tra", cSub:"Xem kết quả nhân viên đã nhập, khép lại các mục NG, rồi xác nhận ngày.",
+  stAssigned:"Được giao", stDone:"Đã kiểm", stNG:"NG", stLate:"Nhập trễ", stMiss:"Bỏ sót", stPending:"Chưa tới hạn", stStop:"Máy dừng", stOK:"Đạt",
+  confirmDay:"Xác nhận ngày", confirmForce:"Còn {n} lượt chưa kiểm · bấm lần nữa để vẫn xác nhận", reopen:"Mở lại ngày", reopened:"Đã mở lại ngày",
+  locked:"Ngày này đã được tổ trưởng xác nhận, không sửa được nữa.",
+  closeNG:"Khép lại NG", closeNote:"Biện pháp xử lý (bắt buộc)", closed:"Đã khép lại", closeNeed:"Ghi biện pháp xử lý trước", openNG:"Chưa khép lại",
+  result:"Kết quả", who:"Người kiểm", formF:"Phiếu",
+  weekOf:"Tuần", copyTo:"Chép sang ngày khác", copyPick:"Chọn các ngày sẽ có phân công giống ngày {d}. Phân công cũ của các ngày đó sẽ bị thay.", copyApply:"Chép phân công",
+  copyWeek:"T2 → T7 tuần này", copyNext:"T2 → T7 tuần sau", copied:"Đã chép phân công sang {n} ngày", pastRO:"Ngày đã qua · chỉ xem",
+  dTitle:"Dashboard chất lượng", dSub:"Lỗi phát sinh, mức tuân thủ kiểm tra và người phụ trách",
+  fromM:"Từ tháng", toM:"Đến tháng", pThis:"Tháng này", p3:"3 tháng gần nhất", pYtd:"Từ đầu năm", allForms:"Tất cả",
+  filterHint:"Bấm vào thanh, cột, ô lịch hoặc dòng nhân viên để lọc toàn bộ dashboard. Bấm lại để bỏ lọc.", filtering:"Đang lọc", refresh:"Làm mới",
+  kComp:"Tuân thủ kiểm tra", kCompSub:"{a}/{b} lượt kiểm đúng giờ", kNG:"Lần NG", kNGSub:"trên {n} lần kiểm", kL2b:"Hàng loại 2", kL2Sub:"đôi bị loại ra",
+  kLM:"Nhập trễ / bỏ sót", kLMSub:"{a} trễ · {b} bỏ sót", kOpen:"NG chưa khép lại", kOpenSub:"cần tổ trưởng ghi biện pháp",
+  prev:"Kỳ trước", noPrev:"Kỳ trước chưa có dữ liệu", unassignedN:"{n} lượt chưa phân công", cumul:"Cộng dồn",
+  pErr:"Loại lỗi phát hiện nhiều nhất", pErrSub:"Số đôi loại 2, xếp giảm dần · % cộng dồn (Pareto): xử lý các loại đầu danh sách trước.",
+  pItem:"Hạng mục kiểm tra bị NG nhiều nhất", pMach:"Máy / chuyền nhiều bất thường nhất", pMachSub:"Tỷ lệ lần kiểm bị NG trên tổng lần kiểm của máy.",
+  pDay:"Theo ngày", pDayL2:"Hàng loại 2 (đôi)", pDayNG:"Lần NG", pProd:"Mã hàng nhiều hàng lỗi nhất",
+  heat:"Lịch tuân thủ kiểm tra", heatSub:"Mỗi cột là một ngày. Máy kiểm 2 lần/ngày: nửa trên là lần 1, nửa dưới là lần 2.",
+  pPeople:"Theo nhân viên", pPeopleSub:"Người trễ / bỏ sót nhiều nhất đứng đầu", onTime:"Đúng giờ", recent:"NG gần đây", noDataR:"Chưa có dữ liệu trong khoảng này.",
+  times:"lần", legNone:"Không giao / chưa tới"
+});
+Object.assign(TX.jp,{
+  revTT:"確認待ち", revAD:"管理者の最終承認待ち", revNone:"承認待ちの日はありません。", openConfirm:"確認する", waitLead:"班長の確認待ち",
+  finalBtn:"最終承認", finalDone:"最終承認済", finalWait:"班長未確認の部署が {n} 件あります", finalUndo:"取消",
+  finalLocked:"管理者が最終承認済みです。管理者のみ取消できます。", checkedN:"点検済", revSubAD:"各班長の確認後、管理者が最終承認して日を確定します。", revSubTT:"班の結果を確認し、日ごとに確認してください。",
+  leadOK:"班長確認済", recentFinal:"最近の最終承認",
+  tConfirm:"確認", cTitle:"点検結果の確認", cSub:"作業者の入力結果を確認し、不合格を処置済みにしてから日次確認します。",
+  stAssigned:"割当", stDone:"点検済", stNG:"NG", stLate:"入力遅れ", stMiss:"未点検", stPending:"期限前", stStop:"停止", stOK:"合格",
+  confirmDay:"日次確認", confirmForce:"未点検 {n} 件 · もう一度押すと確認", reopen:"確認を取消", reopened:"確認を取り消しました",
+  locked:"この日は班長が確認済みのため修正できません。",
+  closeNG:"NGを処置済みにする", closeNote:"処置内容（必須）", closed:"処置済", closeNeed:"処置内容を入力してください", openNG:"未処置",
+  result:"結果", who:"点検者", formF:"点検表",
+  weekOf:"週", copyTo:"他の日にコピー", copyPick:"{d} と同じ割当にする日を選択。既存の割当は上書きされます。", copyApply:"コピー",
+  copyWeek:"今週 月→土", copyNext:"来週 月→土", copied:"{n} 日にコピーしました", pastRO:"過去の日 · 閲覧のみ",
+  dTitle:"品質ダッシュボード", dSub:"不良発生・点検遵守率・担当者",
+  fromM:"開始月", toM:"終了月", pThis:"今月", p3:"直近3か月", pYtd:"年初から", allForms:"すべて",
+  filterHint:"バー・列・カレンダーのマス・担当者行を押すと全体を絞り込み。もう一度押すと解除。", filtering:"絞り込み中", refresh:"更新",
+  kComp:"点検遵守率", kCompSub:"{a}/{b} 件が時間内", kNG:"NG回数", kNGSub:"点検 {n} 回中", kL2b:"二級品", kL2Sub:"双",
+  kLM:"遅れ / 未点検", kLMSub:"遅れ {a} · 未点検 {b}", kOpen:"未処置のNG", kOpenSub:"班長の処置記入が必要",
+  prev:"前期間", noPrev:"前期間のデータなし", unassignedN:"未割当 {n} 件", cumul:"累積",
+  pErr:"多い不良の種類", pErrSub:"二級品の双数・降順・累積%（パレート）：上位から対策。",
+  pItem:"NGが多い点検項目", pMach:"異常の多い機械・ライン", pMachSub:"機械ごとのNG点検回数の割合。",
+  pDay:"日別", pDayL2:"二級品（双）", pDayNG:"NG回数", pProd:"不良の多い品番",
+  heat:"点検遵守カレンダー", heatSub:"列＝日。1日2回の機械は上半分が1回目、下半分が2回目。",
+  pPeople:"担当者別", pPeopleSub:"遅れ・未点検の多い順", onTime:"時間内", recent:"最近のNG", noDataR:"この期間のデータはありません。",
+  times:"回", legNone:"割当なし / 期限前"
+});
+
+let LANG = "vi";
+try{ LANG = localStorage.getItem("qc_lang") || "vi"; }catch(e){}
+const t = k => (TX[LANG][k] ?? TX.vi[k] ?? k);
+const L = o => (o ? (LANG==="jp" ? (o.jp||o.vi||o.name) : (o.vi||o.name)) : "");
+const L2 = o => (o ? (LANG==="jp" ? o.vi : o.jp) : "");
+const esc = s => String(s ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/g,"d").replace(/\s+/g," ").trim();
+const initials = n => { const w=String(n).trim().split(/\s+/); return (w.length>1? w[w.length-2][0]+w[w.length-1][0] : w[0].slice(0,2)).toUpperCase(); };
+
+/* ===================== NGÀY GIỜ ===================== */
+const pad = n => String(n).padStart(2,"0");
+const ymd = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const hm  = d => pad(d.getHours())+":"+pad(d.getMinutes());
+const todayStr = () => ymd(new Date());
+const showDate = s => { const [y,m,d]=s.split("-"); return d+"/"+m+"/"+y; };
+const shortDate = s => { const [,m,d]=s.split("-"); return d+"/"+m; };
+const toMin = s => { const [h,m]=String(s||"0:0").split(":").map(Number); return h*60+(m||0); };
+const shiftDate = (s,n) => { const [y,m,d]=s.split("-").map(Number); return ymd(new Date(y,m-1,d+n)); };
+
+/* ===================== MẬT KHẨU ===================== */
+async function hashPw(pw, salt){
+  const s = salt+"|"+pw;
+  try{
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+  }catch(e){
+    let h1=2166136261, h2=5381;
+    for(const ch of s){ const c=ch.codePointAt(0); h1^=c; h1=Math.imul(h1,16777619)>>>0; h2=(Math.imul(h2,33)+c)>>>0; }
+    return "f"+h1.toString(16)+h2.toString(16);
+  }
+}
+const newSalt = () => Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+
+/* ===================== LƯU TRỮ ===================== */
+const store = {
+  mode:"local", db:null, dl:null, subs:{}, mem:{},
+  async init(){
+    try{
+      if(window.claude && window.claude.use){
+        const db = await window.claude.use("db");
+        if(db){ this.db = db; this.mode = "db"; }
+        window.claude.use("downloads").then(d=>{ this.dl = d; }).catch(()=>{});
+      }
+    }catch(e){}
+  },
+  lsGet(k,def){ try{ const v=localStorage.getItem(k); if(v!=null) return JSON.parse(v); }catch(e){} return this.mem[k] ?? def; },
+  lsSet(k,v){ this.mem[k]=v; try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
+  stop(key){ if(this.subs[key]){ this.subs[key](); delete this.subs[key]; } },
+  stopAll(){ Object.keys(this.subs).forEach(k=>this.stop(k)); },
+  watchByDate(col, date, cb){
+    this.stop(col);
+    if(this.mode==="db"){
+      this.subs[col] = this.db.collection(col).where("date","==",date).onSnapshot(
+        s=>{ const m={}; s.docs.forEach(d=>m[d.id]=d.data()); cb(m); }, ()=>{});
+    } else {
+      const all=this.lsGet("qc_"+col,{}); const m={};
+      Object.entries(all).forEach(([k,v])=>{ if(v.date===date) m[k]=v; }); cb(m);
+    }
+  },
+  async byDate(col, date){
+    if(this.mode==="db"){ const s=await this.db.collection(col).where("date","==",date).get(); const m={}; s.docs.forEach(d=>m[d.id]=d.data()); return m; }
+    const all=this.lsGet("qc_"+col,{}); const m={}; Object.entries(all).forEach(([k,v])=>{ if(v.date===date) m[k]=v; }); return m;
+  },
+  async range(col,a,b){
+    if(this.mode==="db"){
+      const s = await this.db.collection(col).where("date",">=",a).where("date","<=",b).limit(1000).get();
+      return s.docs.map(d=>({...d.data(), _id:d.id}));
+    }
+    return Object.entries(this.lsGet("qc_"+col,{})).filter(([k,r])=>r.date>=a&&r.date<=b).map(([k,r])=>({...r,_id:k}));
+  },
+  async setDoc(col,id,data){
+    if(this.mode==="db") await this.db.collection(col).doc(id).set(data);
+    else { const all=this.lsGet("qc_"+col,{}); all[id]=data; this.lsSet("qc_"+col,all); }
+  },
+  async getDoc(col,id){
+    if(this.mode==="db"){ const s=await this.db.collection(col).doc(id).get(); return s.exists?s.data():null; }
+    return this.lsGet("qc_"+col,{})[id] || null;
+  },
+  async delDoc(col,id){
+    if(this.mode==="db") await this.db.collection(col).doc(id).delete();
+    else { const all=this.lsGet("qc_"+col,{}); delete all[id]; this.lsSet("qc_"+col,all); }
+  },
+  async listIds(col){
+    if(this.mode==="db"){ const s=await this.db.collection(col).limit(1000).get(); return s.docs.map(d=>d.id); }
+    return Object.keys(this.lsGet("qc_"+col,{}));
+  },
+  watchMaster(cb){
+    if(this.mode==="db") this.db.doc("master/config").onSnapshot(s=>cb(s.exists ? s.data() : null), ()=>{});
+    else cb(this.lsGet("qc_master",null));
+  },
+  async saveMaster(m){
+    if(this.mode==="db") await this.db.doc("master/config").set(m);
+    else this.lsSet("qc_master",m);
+  }
+};
+async function offerFile(name, text, mime){
+  if(store.dl){
+    try{ await store.dl.save({filename:name, data:text}); return; }
+    catch(e){ if(e && e.code==="declined") return; }
+  }
+  try{
+    const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type:mime})); a.download=name;
+    document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},800);
+  }catch(e){ toastErr(t("saveErr")); }
+}
+
+/* ===================== TRẠNG THÁI ===================== */
+const S = { view:"login", tab:"input", me:null, master:mergeMaster(null), recs:{}, assign:{}, appr:{}, trendRows:[], trendFor:"",
+  date:todayStr(), sumDate:todayStr(), aDate:todayStr(), aDept:null, draft:null, sheet:null, err:"",
+  rev:null, cDate:todayStr(), cDept:null, cArm:false, apprWeek:{}, aWeekDocs:{}, dFrom:todayStr().slice(0,7), dTo:todayStr().slice(0,7), dForm:"all", dFilt:null, dData:null, dKey:"", dLoading:false,
+  cat:"employees", catQ:"", formSel:"KK", resetArm:false, clearArm:false, authSet:new Set(), login:{id:"",err:"",fails:0,until:0}, pwForced:false };
+
+const FM = f => S.master.forms[f];
+const MC = id => S.master.machines.find(m=>m.id===id) || {vi:id,jp:id};
+const emp = id => S.master.employees.find(e=>e.id===id);
+const meEmp = () => { const e=emp(S.me); return e && e.active ? e : null; };
+const isAD = e => e && e.role==="AD";
+const isLead = e => e && ["TT","QL","CD","AD"].includes(e.role);
+/* phiếu thuộc phạm vi xem */
+const scopeForms = e => {
+  if(!e) return [];
+  if(e.role==="AD" || e.role==="CD" || e.dept==="QL") return FORM_ORDER;
+  return DEPTS[e.dept]?.forms || [];
+};
+/* bộ phận được phân công */
+const manageDepts = e => {
+  if(!e) return [];
+  const withForms = Object.keys(DEPTS).filter(d=>DEPTS[d].forms.length);
+  if(e.role==="AD" || e.dept==="QL") return withForms;
+  if(["TT","QL"].includes(e.role) && DEPTS[e.dept]?.forms.length) return [e.dept];
+  return [];
+};
+const deptOfForm = f => Object.keys(DEPTS).find(d=>DEPTS[d].forms.includes(f));
+const activeItems = f => FM(f).items.filter(i=>i.active!==false);
+const activeMachines = f => FM(f).machines.filter(id=>S.master.machines.some(m=>m.id===id && m.active));
+const notifyFor = f => {
+  const em = S.master.employees.filter(e=>e.active);
+  let list = [];
+  if(f==="KK") list = em.filter(e=>e.dept==="KK"&&e.role==="TT");
+  else if(f==="QCCS") list = em.filter(e=>e.dept==="CSQC"&&e.role==="TT");
+  else if(f==="ISCS"||f==="ISPVC") list = em.filter(e=>e.role==="CD");
+  else if(f==="QTPVC") list = em.filter(e=>e.dept==="PVC"&&e.role==="QL");
+  return list.map(e=>e.name).join(", ");
+};
+const leadsOf = dept => S.master.employees.filter(e=>e.active && e.dept===dept && ["TT","QL"].includes(e.role)).map(e=>e.name).join(", ");
+const recId = (date,f,m,s) => date+"_"+f+"_"+m+"_"+s;
+const aKey = (f,m,s) => f+"|"+m+"|"+s;
+const slotLabel = (f,i) => { const s=FM(f).slots[i]; return s && s.vi ? L(s) : (t("slot")+" "+(i+1)); };
+const formIcon = (f,size) => `<span class="fi" style="background:var(${FM(f).hue})${size?`;width:${size}px;height:${size}px;border-radius:8px`:""}">${ico(FM(f).icon)}</span>`;
+const deptColor = d => DEPTS[d]?.c || "#5B6879";
+const avatar = e => `<span class="ava" style="background:${deptColor(e?.dept)}">${e?.role==="AD"?ico("lock"):esc(initials(e?.name||"?"))}</span>`;
+/* phân công: gộp các tài liệu của các bộ phận */
+const assignMap = () => { const m={}; Object.values(S.assign).forEach(doc=>Object.assign(m, doc.map||{})); return m; };
+const assignedTo = (f,m,s) => assignMap()[aKey(f,m,s)] || "";
+
+/* ===================== VẼ ===================== */
+const topEl = document.getElementById("top");
+const app = document.getElementById("app");
+const sheetEl = document.getElementById("sheet");
+
+function render(){
+  document.documentElement.lang = LANG==="jp" ? "ja" : "vi";
+  const e = meEmp();
+  if(!e && !["login"].includes(S.view)) S.view="login";
+  document.body.classList.toggle("wide", S.view==="main" && S.tab!=="input");
+  topEl.innerHTML = vTop(e);
+  app.innerHTML = S.view==="login" ? vLogin() : S.view==="pw" ? vPw() : S.view==="form" ? vForm() : vMain(e);
+  renderSheet();
+}
+const langBtn = () => `<button class="tbtn" data-act="lang" aria-label="Ngôn ngữ / 言語">${LANG==="vi"?"日本語":"VI"}</button>`;
+
+function vTop(e){
+  if(S.view==="form"){
+    const d=S.draft;
+    return `<div class="top-in"><button class="tbtn" data-act="back" aria-label="Quay lại">${ico("back")}</button>
+      <div class="brand"><h1>${esc(L(MC(d.machine)))}</h1><span>${esc(L(FM(d.form)))}</span></div>${langBtn()}</div>`;
+  }
+  let h = `<div class="top-in"><div class="logo">K</div><div class="brand"><b>KACHIBOSHI VN</b><span>${t("app")}</span></div>`;
+  if(e && S.view==="main") h += `<button class="tbtn" data-act="menu" aria-label="${esc(t("change"))}">${avatar(e)}<span class="nm">${esc(e.name)}</span></button>`;
+  h += langBtn()+`</div>`;
+  if(e && S.view==="main"){
+    const tabs = [];
+    if(isLead(e) || true) tabs.push(["input","list",t("tInput")]);
+    if(manageDepts(e).length) tabs.push(["assign","users",t("tAssign")],["confirm","check",t("tConfirm")]);
+    if(isLead(e)) tabs.push(["sum","chart",t("tSum")]);
+    if(isAD(e)) tabs.push(["cat","gear",t("tCat")]);
+    if(tabs.length>1) h += `<div class="tabs" role="tablist">`+tabs.map(x=>`<button role="tab" aria-selected="${S.tab===x[0]}" data-act="tab" data-v="${x[0]}">${ico(x[1])}${x[2]}</button>`).join("")+`</div>`;
+  }
+  return h;
+}
+const banner = () => store.mode==="local" ? `<div class="banner">${ico("alert")}<span>${t("local")}</span></div>` : "";
+
+/* ---------- đăng nhập ---------- */
+function vLogin(){
+  const lg = S.login;
+  return `<div class="login">${banner()}<form class="card" id="loginForm" autocomplete="on">
+    <div style="display:flex;gap:12px;align-items:center"><div class="logo" style="width:52px;height:52px;font-size:26px;border-radius:14px">K</div>
+      <div><h2>${t("login")}</h2><div class="muted" style="font-size:14px">${t("loginSub")}</div></div></div>
+    <label class="lfield"><span>${t("empId")}</span><input id="lid" name="username" autocomplete="username" autocapitalize="characters" spellcheck="false" placeholder="VD: NV003" value="${esc(lg.id)}" required></label>
+    <label class="lfield"><span>${t("password")}</span><span class="pwrap"><input id="lpw" name="password" type="password" autocomplete="current-password" placeholder="••••" required><button type="button" data-act="showpw" data-for="lpw" aria-label="Hiện mật khẩu">${ico("eye")}</button></span></label>
+    <label class="check"><input type="checkbox" id="lrem" checked>${t("remember")}</label>
+    ${lg.err?`<p class="err" style="margin:0">${esc(lg.err)}</p>`:""}
+    <button class="big" type="submit">${ico("login")}${t("loginBtn")}</button>
+    <div class="hint">${t("forgot")}</div></form></div>`;
+}
+function vPw(){
+  const e = meEmp();
+  return `<div class="login"><form class="card" id="pwForm">
+    <div style="display:flex;gap:12px;align-items:center">${avatar(e).replace('class="ava"','class="ava" style="width:52px;height:52px;font-size:18px;background:'+deptColor(e.dept)+'"')}
+      <div><h2 style="font-size:21px">${S.pwForced?t("firstPw"):t("changePw")}</h2><div class="muted" style="font-size:14px">${esc(e.name)} · ${esc(e.id)}</div></div></div>
+    ${S.pwForced?`<p class="muted" style="margin:0;font-size:14.5px">${t("firstPwSub")}</p>`:""}
+    <label class="lfield"><span>${t("newPw")}</span><span class="pwrap"><input id="np1" type="password" autocomplete="new-password" required><button type="button" data-act="showpw" data-for="np1" aria-label="Hiện">${ico("eye")}</button></span></label>
+    <label class="lfield"><span>${t("confirmPw")}</span><input id="np2" type="password" autocomplete="new-password" required></label>
+    ${S.err?`<p class="err" style="margin:0">${esc(S.err)}</p>`:""}
+    <button class="big" type="submit">${ico("key")}${t("savePw")}</button>
+    ${S.pwForced?`<button type="button" class="ghost" style="justify-content:center" data-act="logout">${ico("logout")}${t("logout")}</button>`:`<button type="button" class="ghost" style="justify-content:center" data-act="pwCancel">${t("cancel")}</button>`}
+  </form></div>`;
+}
+
+function slotState(f,m,i,date){
+  const r = S.recs[recId(date,f,m,i)];
+  const st = FM(f).slots[i].t;
+  if(r) return {cls:r.result, txt:t(r.result), sub:r.time, rec:r};
+  if(date<todayStr()) return {cls:"late", txt:t("missing"), sub:st};
+  if(date>todayStr()) return {cls:"wait", txt:t("wait"), sub:st};
+  const now = new Date(); const nm = now.getHours()*60+now.getMinutes();
+  if(nm > toMin(st)+30) return {cls:"late", txt:t("late"), sub:st};
+  if(nm >= toMin(st)-60) return {cls:"todo", txt:t("todo"), sub:st};
+  return {cls:"wait", txt:t("wait"), sub:st};
+}
+
+/* ---------- màn chính ---------- */
+function vMain(e){
+  if(S.tab==="assign" && manageDepts(e).length) return banner()+vAssign(e);
+  if(S.tab==="confirm" && manageDepts(e).length) return banner()+vConfirm(e);
+  if(S.tab==="sum" && isLead(e)) return banner()+vDash(e);
+  if(S.tab==="cat" && isAD(e)) return banner()+vCat();
+  return banner()+vTasks(e);
+}
+
+/* ---------- việc của tôi ---------- */
+function myTasks(e, date){
+  const map = assignMap(); const out = [];
+  FORM_ORDER.forEach(f=>activeMachines(f).forEach(m=>FM(f).slots.forEach((s,i)=>{ if(map[aKey(f,m,i)]===e.id) out.push({f,m,i}); })));
+  return out;
+}
+function reviewDays(e){
+  const R = S.rev; if(!R) return [];
+  const depts = manageDepts(e), td = todayStr(), out = [];
+  for(let k=0;k<7;k++){
+    const d = shiftDate(td,-k), ds = [];
+    depts.forEach(dept=>{
+      const amap = (R.assign[d+"_"+dept]||{}).map||{};
+      let total=0, done=0, ng=0;
+      deptSlots(dept).forEach(({f,m,i})=>{ const rec=R.checks[recId(d,f,m,i)]; if(!amap[aKey(f,m,i)] && !rec) return; total++; if(rec){ done++; if(rec.result==="X") ng++; } });
+      if(total) ds.push({dept,total,done,ng,appr:R.appr[d+"_"+dept]||null});
+    });
+    if(ds.length) out.push({date:d, depts:ds, final:R.appr[d+"_FINAL"]||null});
+  }
+  return out;
+}
+function vReview(e){
+  if(!manageDepts(e).length) return "";
+  const days = reviewDays(e), td = todayStr(), ad = isAD(e);
+  const dayName = d => (d===td?t("today")+" · ":"")+WD[LANG][wdOf(d)]+" "+shortDate(d);
+  const row = (d,x) => `<button class="revrow" data-act="goConfirm" data-d="${d}" data-dept="${x.dept}"><span class="nm">${esc(L(DEPTS[x.dept]))}</span>
+      <span class="cnt"><b style="color:var(--ink)">${x.done}/${x.total}</b> ${t("checkedN")}${x.ng?` · <b style="color:var(--bad)">${x.ng} NG</b>`:""}</span>
+      ${x.appr?`<span class="badge b-ok">${ico("check")}${esc(x.appr.name)} · ${esc(x.appr.time)}</span>`:`<span class="badge b-warn">${ico("clock")}${ad?t("waitLead"):t("openConfirm")}</span>`}${ico("next")}</button>`;
+  let h = `<div class="label">${ico("check")}<span style="color:var(--ink)">${ad?t("revAD"):t("revTT")}</span></div><p class="muted" style="margin:-4px 2px 10px;font-size:14px">${ad?t("revSubAD"):t("revSubTT")}</p>`;
+  if(!S.rev) return h+`<div class="empty">…</div>`;
+  const open = ad ? days.filter(x=>!x.final) : days.map(x=>({...x,depts:x.depts.filter(y=>!y.appr)})).filter(x=>x.depts.length);
+  if(!open.length) h += `<div class="empty">${t("revNone")}</div>`;
+  else {
+    h += `<div class="rev">`;
+    open.forEach(x=>{
+      const wait = x.depts.filter(y=>!y.appr).length;
+      h += `<div class="revcard"><div class="revcard-h"><b>${esc(dayName(x.date))}</b>${ad?`<span class="badge ${wait?"b-wait":"b-ok"}">${x.depts.length-wait}/${x.depts.length} ${t("leadOK").toLowerCase()}</span>`:""}</div>`+
+        x.depts.map(y=>row(x.date,y)).join("");
+      if(ad) h += wait ? `<p class="muted" style="margin:0;font-size:13.5px">${ico("clock")} ${fill(t("finalWait"),{n:wait})}</p>`
+                       : `<button class="big" data-act="finalApprove" data-d="${x.date}">${ico("check")}${t("finalBtn")} ${shortDate(x.date)}</button>`;
+      h += `</div>`;
+    });
+    h += `</div>`;
+  }
+  const fin = days.filter(x=>x.final);
+  if(fin.length){
+    h += `<div class="label">${ico("lock")}${t("recentFinal")}</div><div class="rev">`+fin.map(x=>`<div class="revrow" style="cursor:default"><span class="nm">${esc(dayName(x.date))}</span><span class="badge b-ok">${ico("check")}${t("finalDone")} · ${esc(x.final.name)} · ${esc(x.final.time)}</span>${ad?`<button class="ghost" style="min-height:36px" data-act="finalUndo" data-d="${x.date}">${t("finalUndo")}</button>`:""}</div>`).join("")+`</div>`;
+  }
+  return h;
+}
+function vTasks(e){
+  const date = todayStr();
+  const tasks = myTasks(e, date);
+  const review = vReview(e);
+  if(!tasks.length && review){
+    return `<div class="hello"><div class="hello-top"><b>${t("myWork")}</b><span class="muted">${showDate(date)}</span></div></div>`+review;
+  }
+  if(!tasks.length){
+    const lead = leadsOf(e.dept);
+    return `<div class="hello"><div class="hello-top"><b>${t("myWork")}</b><span class="muted">${showDate(date)}</span></div></div>
+      <div class="empty" style="margin-top:14px">${ico("cal")}<p style="margin:8px 0 4px;font-weight:700;color:var(--ink)">${t("notAssigned")}</p>${lead?`<p style="margin:0">${t("askLead")}: ${esc(lead)}</p>`:""}</div>`;
+  }
+  const done = tasks.filter(x=>S.recs[recId(date,x.f,x.m,x.i)]).length;
+  let h = `<div class="hello"><div class="hello-top"><b>${t("myWork")}</b><span class="muted"><b style="font-size:16px;color:var(--ink)">${done}/${tasks.length}</b> ${t("progress")}</span></div>
+    <div class="prog"><i style="width:${Math.round(done/tasks.length*100)}%"></i></div></div>`;
+  FORM_ORDER.forEach(f=>{
+    const ft = tasks.filter(x=>x.f===f); if(!ft.length) return;
+    h += `<div class="label">${formIcon(f,26)}<span style="color:var(--ink)">${esc(L(FM(f)))}</span></div><div class="tasks">`;
+    [...new Set(ft.map(x=>x.m))].forEach(m=>{
+      h += `<div class="task"><div class="task-h"><b>${esc(L(MC(m)))}</b></div><div class="slots">`;
+      ft.filter(x=>x.m===m).forEach(({i})=>{
+        const st = slotState(f,m,i,date);
+        const icon = st.rec ? (st.rec.result==="OK"?ico("check"):st.rec.result==="X"?ico("alert"):ico("minus")) : "";
+        h += `<button class="slot s-${st.cls}" data-act="open" data-f="${f}" data-m="${m}" data-s="${i}"><small>${esc(slotLabel(f,i))}${st.sub?" · "+esc(st.sub):""}</small><span style="display:flex;gap:6px;align-items:center">${icon}${esc(st.txt)}</span></button>`;
+      });
+      h += `</div></div>`;
+    });
+    h += `</div>`;
+  });
+  return h+review;
+}
+
+/* ---------- phiếu nhập ---------- */
+const blankItem = F => F.pos ? {pos:{T:"OK",G:"OK",P:"OK"},chips:[],note:""} : {r:"OK",chips:[],note:"",meas:""};
+function newDraft(f,m,s){
+  const ex = S.recs[recId(S.date,f,m,s)];
+  if(ex) return clone(ex);
+  const F = FM(f); const items = {};
+  activeItems(f).forEach(it=>{ items[it.c] = blankItem(F); });
+  let product = "";
+  if(F.product) for(let i=s-1;i>=0;i--){ const p=S.recs[recId(S.date,f,m,i)]; if(p&&p.product){product=p.product;break;} }
+  return {id:recId(S.date,f,m,s),date:S.date,form:f,machine:m,slot:s,status:"run",product,items,loai2:[]};
+}
+const itemIsX = (F,v) => !!v && (F.pos ? Object.values(v.pos||{}).includes("X") : v.r==="X");
+const errsFor = f => S.master.errors.filter(e=>e.active && (!e.type || !FM(f).ptype || e.type===FM(f).ptype));
+
+function vForm(){
+  const d = S.draft, F = FM(d.form), e = meEmp();
+  const mySlots = F.slots.map((s,i)=>i).filter(i=>assignedTo(d.form,d.machine,i)===e.id);
+  let h = `<div class="fhead" style="background:var(${F.hue})"><span class="fi">${ico(F.icon)}</span><div><b>${esc(L(MC(d.machine)))}</b><span>${esc(L(F))} · ${showDate(d.date)}</span></div></div>`;
+  if(mySlots.length>1){
+    h += `<div class="label">${ico("clock")}${t("slot")}</div><div class="seg">`+mySlots.map(i=>`<button aria-pressed="${d.slot===i}" data-act="slot" data-v="${i}">${esc(slotLabel(d.form,i))} · ${F.slots[i].t}</button>`).join("")+`</div>`;
+  } else {
+    h += `<div class="label">${ico("clock")}${esc(slotLabel(d.form,d.slot))} · ${F.slots[d.slot].t}</div>`;
+  }
+  h += `<div class="label" style="margin-top:14px">${ico("factory")}${t("status")}</div><div class="seg">
+    <button aria-pressed="${d.status==="run"}" data-act="status" data-v="run">${t("run")}</button>
+    <button class="st-broken" aria-pressed="${d.status==="broken"}" data-act="status" data-v="broken">${t("broken")}</button>
+    <button class="st-off" aria-pressed="${d.status==="off"}" data-act="status" data-v="off">${t("off")}</button></div>`;
+  if(d.status!=="run"){
+    h += `<p class="muted" style="margin:14px 2px">${t("stopNote")}</p>
+      <textarea id="stopnote" class="note" data-in="stopnote" placeholder="${esc(t("note"))}">${esc(d.stopNote||"")}</textarea>`;
+  } else {
+    if(F.product){
+      const need = S.err && !d.product && F.product==="req";
+      h += `<div class="label">${ico("box")}${t("product")}</div><button class="pick ${d.product?"set":""} ${need?"need":""}" data-act="pickProduct"><span>${esc(d.product||t("chooseProduct"))}</span>${ico("next")}</button>`;
+    }
+    h += `<div class="label">${ico("list")}${t("items")}</div><div class="stack">`;
+    activeItems(d.form).forEach(it=>{
+      const v = d.items[it.c] ||= blankItem(F);
+      const x = itemIsX(F,v);
+      h += `<div class="item ${x?"isX":""}" id="it-${it.c}"><div class="item-h"><div class="item-name">${esc(L(it))}<small>${esc(L2(it))}</small></div>`;
+      if(!F.pos) h += `<div class="okx"><button class="ok" aria-pressed="${v.r==="OK"}" data-act="okx" data-c="${it.c}" data-v="OK">${ico("check")}${LANG==="jp"?"OK":"Đạt"}</button><button class="x" aria-pressed="${v.r==="X"}" data-act="okx" data-c="${it.c}" data-v="X">${ico("x")}X</button></div>`;
+      h += `</div>`;
+      if(F.pos) h += `<div class="pos">`+["T","G","P"].map(p=>`<button data-act="pos" data-c="${it.c}" data-p="${p}" data-v="${v.pos[p]}" aria-label="${esc(L(POSN[p]))} ${v.pos[p]}">${v.pos[p]==="OK"?ico("check"):ico("x")}<small>${esc(L(POSN[p]))}</small></button>`).join("")+`</div>`;
+      if(it.meas) h += `<label class="meas">${ico("therm")}${t("meas")}<input id="m-${it.c}" data-in="meas" data-c="${it.c}" value="${esc(v.meas)}" placeholder="75/100"></label>`;
+      if(x){
+        const nt = notifyFor(d.form);
+        const chips = F.chips==="err" ? errsFor(d.form) : ACTS;
+        h += `<div class="xbox">${nt?`<div class="notify">${ico("alert")}${t("notifyNow")}: ${esc(nt)}</div>`:""}
+          <div class="muted" style="font-size:14px;font-weight:600">${t("xWhat")}</div>
+          <div class="chips">`+chips.map(c=>`<button class="chip" aria-pressed="${v.chips.includes(c.id)}" data-act="chip" data-c="${it.c}" data-v="${c.id}">${esc(L(c))}</button>`).join("")+`</div>
+          <textarea id="n-${it.c}" class="note" data-in="note" data-c="${it.c}" placeholder="${esc(t("note"))}">${esc(v.note)}</textarea></div>`;
+      }
+      h += `</div>`;
+    });
+    h += `</div>`;
+    if(F.loai2){
+      const tot = d.loai2.reduce((a,x)=>a+x.doi,0);
+      h += `<div class="label">${ico("box")}${t("l2")}${tot?` · <span style="color:var(--warn)">${tot} ${t("pair")}</span>`:""}</div><div class="stack">`;
+      d.loai2.forEach((r,i)=>{
+        const er = S.master.errors.find(e=>e.id===r.err);
+        h += `<div class="l2row"><b>${esc(L(er)||r.err)}</b><span>${r.qty} ${r.unit==="ta"?t("dozen"):t("pair")}</span><button class="del" data-act="delL2" data-i="${i}" aria-label="Xoá">${ico("trash")}</button></div>`;
+      });
+      h += `<button class="addl2" data-act="addL2">${ico("plus")}${t("addL2")}</button></div>`;
+    }
+  }
+  h += `<div class="savebar">${S.err?`<p class="err">${esc(S.err)}</p>`:""}<button data-act="save">${ico("save")}${t("save")}</button></div>`;
+  return h;
+}
+
+/* ---------- sheet ---------- */
+function productList(){
+  const q = norm(S.sheet.q);
+  const pt = FM(S.draft.form).ptype;
+  return S.master.products.filter(p=>p.active && (!p.type || !pt || p.type===pt) &&
+    (!q || norm(p.name).includes(q) || norm(p.aliases).split(",").some(a=>a.trim() && a.trim().startsWith(q)) || norm(p.name).split(" ").some(w=>w.startsWith(q))))
+    .map(p=>`<button class="opt ${S.draft.product===p.name?"cur":""}" data-act="setProduct" data-v="${esc(p.name)}">${esc(p.name)}${p.aliases?`<small>${esc(p.aliases)}</small>`:""}</button>`).join("") || `<p class="muted">—</p>`;
+}
+const closeBtn = () => `<button class="x-btn" data-act="closeSheet" aria-label="${t("close")}">${ico("x")}</button>`;
+function renderSheet(){
+  const sh = S.sheet;
+  if(!sh){ sheetEl.innerHTML=""; return; }
+  let h = `<div class="scrim" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" data-stop="1">`;
+  if(sh.type==="product"){
+    h += `<div class="sheet-h"><b>${ico("box")}${t("product")}</b>${closeBtn()}</div>
+      <input class="search" id="psearch" data-in="psearch" placeholder="${esc(t("search"))}" value="${esc(sh.q||"")}" autocomplete="off">
+      <div class="opts" id="plist">${productList()}</div>`;
+  } else if(sh.type==="l2"){
+    if(!sh.err){
+      h += `<div class="sheet-h"><b>${t("chooseErr")}</b>${closeBtn()}</div><div class="chips">`+
+        errsFor(S.draft.form).map(e=>`<button class="chip" style="min-height:56px;font-size:17px" data-act="l2err" data-v="${e.id}">${esc(L(e))}</button>`).join("")+`</div>`;
+    } else {
+      const er = S.master.errors.find(e=>e.id===sh.err);
+      h += `<div class="sheet-h"><b>${esc(L(er))}</b>${closeBtn()}</div>
+        <div class="muted" style="font-weight:600">${t("qty")}</div>
+        <div class="stepper"><button data-act="qty" data-v="-1" aria-label="Giảm">−</button><input id="qtyin" data-in="qty" inputmode="numeric" value="${sh.qty}"><button data-act="qty" data-v="1" aria-label="Tăng">+</button></div>
+        <div class="seg"><button aria-pressed="${sh.unit==="doi"}" data-act="unit" data-v="doi">${t("pair")}</button><button aria-pressed="${sh.unit==="ta"}" data-act="unit" data-v="ta">${t("dozen")} (×12)</button></div>
+        <button class="big" data-act="l2ok">${ico("plus")}${t("add")}</button>`;
+    }
+  } else if(sh.type==="detail"){
+    h += vDetail(sh.rec);
+  } else if(sh.type==="copy"){
+    const td=todayStr(), ws=wkStart(S.aDate);
+    h += `<div class="sheet-h"><b>${ico("cal")}${t("copyTo")}</b>${closeBtn()}</div><p class="muted" style="margin:0;font-size:14px">${fill(t("copyPick"),{d:shortDate(S.aDate)})}</p>
+      <div class="mchips"><button class="mchip" data-act="cpPreset" data-v="this">${t("copyWeek")}</button><button class="mchip" data-act="cpPreset" data-v="next">${t("copyNext")}</button></div><div class="week" style="grid-template-columns:repeat(7,minmax(0,1fr))">`;
+    for(let k=0;k<14;k++){ const d=shiftDate(ws,k); const dis = d<td || d===S.aDate;
+      h += `<button class="wday" ${dis?"disabled style='opacity:.35'":""} aria-pressed="${sh.sel.has(d)}" data-act="cpDay" data-v="${d}"><small>${WD[LANG][wdOf(d)]}</small><b>${shortDate(d)}</b><span class="wcnt">${sh.sel.has(d)?"✓":""}</span></button>`; }
+    h += `</div><button class="big" data-act="cpApply" ${sh.sel.size?"":"disabled style='opacity:.5'"}>${ico("copy")}${t("copyApply")} (${sh.sel.size})</button>`;
+  } else if(sh.type==="menu"){
+    const e = meEmp();
+    h += `<div class="sheet-h"><b>${t("change")}</b>${closeBtn()}</div>
+      <div class="me-card">${avatar(e)}<div><b style="font-size:18px">${esc(e.name)}</b><div class="muted">${esc(e.id)} · ${esc(L(DEPTS[e.dept]))} · ${esc(L(ROLES[e.role]))}</div></div></div>
+      <button class="ghost" style="min-height:54px;justify-content:center;font-size:16px" data-act="changePw">${ico("key")}${t("changePw")}</button>
+      <button class="ghost danger" style="min-height:54px;justify-content:center;font-size:16px" data-act="logout">${ico("logout")}${t("logout")}</button>`;
+  }
+  h += `</div></div>`;
+  sheetEl.innerHTML = h;
+}
+
+function vDetail(r){
+  const F = FM(r.form);
+  let h = `<div class="sheet-h">${formIcon(r.form)}<b>${esc(L(MC(r.machine)))} · ${esc(slotLabel(r.form,r.slot))}</b>${closeBtn()}</div>
+    <div class="muted">${esc(L(F))} · ${showDate(r.date)} ${esc(r.time)} · ${esc(r.workerName)}${r.editedAt?" · ✎":""}</div>`;
+  if(r.product) h += `<div><b>${t("product")}:</b> ${esc(r.product)}</div>`;
+  if(r.status!=="run"){
+    h += `<div><span class="badge b-stop">${t(r.status)}</span> ${esc(r.stopNote||"")}</div>`;
+  } else {
+    h += `<div class="tbl-wrap"><table class="ptable"><tbody>`;
+    F.items.filter(it=>r.items[it.c]).forEach(it=>{
+      const v = r.items[it.c];
+      const res = F.pos ? ["T","G","P"].map(p=>`${esc(L(POSN[p]))} ${v.pos?.[p]==="X"?'<span class="badge b-bad">X</span>':'<span class="badge b-ok">✓</span>'}`).join(" ")
+                        : (v.r==="X"?'<span class="badge b-bad">X</span>':'<span class="badge b-ok">'+t("OK")+'</span>');
+      const extra = [v.meas, chipNames(r.form,v.chips), v.note].filter(Boolean).map(esc).join(" · ");
+      h += `<tr><td><b>${esc(L(it))}</b>${extra?`<div class="muted" style="font-size:13px">${extra}</div>`:""}</td><td style="text-align:right;white-space:nowrap">${res}</td></tr>`;
+    });
+    h += `</tbody></table></div>`;
+    if(r.loai2?.length) h += `<div><b>${t("l2")}:</b> `+r.loai2.map(x=>`${esc(L(S.master.errors.find(e=>e.id===x.err))||x.err)} ${x.doi} ${t("pair")}`).join(", ")+`</div>`;
+  }
+  if(r.result==="X"){
+    if(r.close) h += `<div class="closebox" style="background:var(--ok-bg)"><b style="color:var(--ok);display:flex;gap:6px;align-items:center">${ico("check")}${t("closed")} · ${esc(r.close.name)} · ${esc(r.close.time)}</b><span>${esc(r.close.note)}</span></div>`;
+    else if(canClose(meEmp(),r)) h += `<div class="closebox"><b style="color:var(--bad)">${t("openNG")}</b><textarea id="closeNote" placeholder="${esc(t("closeNote"))}"></textarea><button class="primary" data-act="closeNG" data-id="${esc(r.id)}">${ico("check")}${t("closeNG")}</button></div>`;
+    else h += `<span class="badge b-bad">${t("openNG")}</span>`;
+  }
+  return h;
+}
+const chipNames = (f,ids) => (ids||[]).map(id => L((FM(f).chips==="err" ? S.master.errors : ACTS).find(c=>c.id===id)) || id).join(", ");
+
+/* ---------- phân công ---------- */
+const WD = {vi:["CN","T2","T3","T4","T5","T6","T7"], jp:["日","月","火","水","木","金","土"]};
+const wdOf = d => { const [y,m,dd]=d.split("-").map(Number); return new Date(y,m-1,dd).getDay(); };
+const wkStart = d => shiftDate(d, -((wdOf(d)+6)%7));
+const fill = (s,o) => String(s).replace(/\{(\w+)\}/g,(m,k)=>o[k]??"");
+const deptSlots = dept => { const out=[]; DEPTS[dept].forms.forEach(f=>activeMachines(f).forEach(m=>FM(f).slots.forEach((s,i)=>out.push({f,m,i})))); return out; };
+
+function vAssign(e){
+  const depts = manageDepts(e);
+  if(!depts.includes(S.aDept)) S.aDept = depts[0];
+  const dept = S.aDept, forms = DEPTS[dept].forms, td = todayStr();
+  const doc = S.assign[S.aDate+"_"+dept] || S.aWeekDocs[S.aDate+"_"+dept] || {map:{}};
+  const map = doc.map || {};
+  const approved = !!S.appr[S.aDate+"_"+dept];
+  const ro = S.aDate < td || approved;
+  const members = S.master.employees.filter(x=>x.active && x.dept===dept && x.role!=="AD");
+  const all = deptSlots(dept), total = all.length;
+  const set = all.filter(x=>map[aKey(x.f,x.m,x.i)]).length;
+  const opts = sel => `<option value="">${t("nobody")}</option>`+members.map(x=>`<option value="${x.id}" ${x.id===sel?"selected":""}>${esc(x.name)}${x.role!=="CN"?" ("+esc(L(ROLES[x.role]))+")":""}</option>`).join("");
+  const ws = wkStart(S.aDate);
+  let h = `<div class="dhead"><h2>${t("aTitle")}<small>${t("aSub")}</small></h2>
+    <div class="datenav"><button class="nbtn" data-act="aWeek" data-v="-7" aria-label="Tuần trước">${ico("back")}</button><b>${t("weekOf")} ${shortDate(ws)}–${shortDate(shiftDate(ws,6))}</b><button class="nbtn" data-act="aWeek" data-v="7" aria-label="Tuần sau" ${ws>=shiftDate(wkStart(td),14)?"disabled":""}>${ico("next")}</button></div></div>`;
+  if(depts.length>1) h += `<div class="mchips" style="margin-bottom:12px">`+depts.map(d=>`<button class="mchip" aria-pressed="${d===dept}" data-act="aDept" data-v="${d}">${esc(L(DEPTS[d]))}</button>`).join("")+`</div>`;
+  /* dải 7 ngày */
+  h += `<div class="week">`;
+  for(let k=0;k<7;k++){
+    const d = shiftDate(ws,k), dm = (S.aWeekDocs[d+"_"+dept]||(d===S.aDate?doc:null)||{}).map||{};
+    const n = all.filter(x=>dm[aKey(x.f,x.m,x.i)]).length;
+    h += `<button class="wday ${d<td?"past":""}" aria-pressed="${d===S.aDate}" data-act="aPick" data-v="${d}"><small>${WD[LANG][wdOf(d)]}${d===td?" · "+t("today"):""}</small><b>${shortDate(d)}</b><span class="wcnt ${total&&n===total?"full":n?"part":""}">${n}/${total}</span></button>`;
+  }
+  h += `</div>`;
+  h += `<div class="atool"><span class="badge ${set===total?"b-ok":"b-wait"}" style="font-size:14px;padding:8px 12px">${set}/${total} ${t("aCount")}</span>`;
+  if(ro) h += `<span class="badge b-stop">${ico("lock")}${approved?t("approved"):t("pastRO")}</span>`;
+  else h += `<button class="ghost" data-act="aCopyPrev">${ico("copy")}${t("aCopy")}</button>${set?`<button class="primary" data-act="aCopyTo">${ico("cal")}${t("copyTo")}</button>`:""}
+    ${set?`<button class="ghost danger" data-act="aClear">${ico("trash")}${S.clearArm?t("aClearConfirm"):t("aClear")}</button>`:""}`;
+  if(doc.byName) h += `<span class="muted" style="font-size:13px">${esc(doc.byName)} · ${esc(doc.time||"")}</span>`;
+  h += `</div>`;
+  if(!forms.length) return h+`<div class="empty">${t("noDeptForms")}</div>`;
+  h += `<div class="agrid">`;
+  forms.forEach(f=>{
+    const F = FM(f);
+    h += `<div class="card"><h3>${formIcon(f)}${esc(L(F))}</h3>`;
+    if(!ro) h += `<div class="quick"><span class="muted" style="font-size:13.5px;font-weight:600">${t("aQuick")}</span><select id="q_${f}" aria-label="${esc(t("aQuick"))}">${opts("")}</select><button class="primary" data-act="aQuick" data-f="${f}">${t("aApply")}</button></div>`;
+    activeMachines(f).forEach(m=>{
+      h += `<div class="amach"><b>${esc(L(MC(m)))}</b>`;
+      F.slots.forEach((s,i)=>{
+        const k = aKey(f,m,i), v = map[k]||"";
+        const r = S.recs[recId(S.aDate,f,m,i)];
+        h += `<div class="arow"><span>${esc(slotLabel(f,i))} · ${s.t}</span><select class="${v?"set":""}" data-assign="${k}" ${ro?"disabled":""} aria-label="${esc(L(MC(m))+" "+slotLabel(f,i))}">${opts(v)}</select>${r?stateBadge(outcome(S.aDate,f,i,r),r):""}</div>`;
+      });
+      h += `</div>`;
+    });
+    h += `</div>`;
+  });
+  return h+`</div>`;
+}
+async function saveAssign(dept, map, date){
+  date = date || S.aDate;
+  const e = meEmp(), n = new Date();
+  const doc = {date, dept, map, by:e.id, byName:e.name, time:hm(n)+" "+shortDate(todayStr()), at:n.toISOString()};
+  await store.setDoc("assign", date+"_"+dept, doc);
+  S.aWeekDocs[date+"_"+dept]=doc;
+  if(date===S.aDate) S.assign[date+"_"+dept]=doc;
+  return doc;
+}
+
+/* ---------- kết quả một lượt kiểm ---------- */
+const GRACE = 30;
+function outcome(date,f,i,rec){
+  const due = toMin(FM(f).slots[i]?.t)+GRACE;
+  if(rec){
+    if(rec.result==="STOP") return {st:"stop", late:false};
+    const late = toMin(rec.time) > due;
+    return {st: rec.result==="X"?"ng":"ok", late};
+  }
+  const td=todayStr(), now=new Date(), nm=now.getHours()*60+now.getMinutes();
+  if(date<td || (date===td && nm>due)) return {st:"miss", late:false};
+  return {st:"pending", late:false};
+}
+function stateBadge(o, rec){
+  const map = {ok:["b-ok","check",t("stOK")], ng:["b-bad","alert",t("stNG")], miss:["b-warn","x",t("stMiss")], pending:["b-wait","clock",t("stPending")], stop:["b-stop","minus",t("stStop")]};
+  const [c,i,l] = map[o.st];
+  return `<span class="badge ${c}">${ico(i)}${l}${rec&&rec.time?" "+esc(rec.time):""}</span>${o.late?`<span class="badge b-warn">${ico("clock")}${t("stLate")}</span>`:""}`;
+}
+
+/* ---------- xác nhận của tổ trưởng ---------- */
+function confirmRows(dept, date){
+  const amap = (S.assign[date+"_"+dept]||{}).map||{};
+  const rows = [];
+  deptSlots(dept).forEach(({f,m,i})=>{
+    const who = amap[aKey(f,m,i)]||"", rec = S.recs[recId(date,f,m,i)];
+    if(!who && !rec) return;
+    rows.push({f,m,i,who:rec?rec.worker:who,rec,...outcome(date,f,i,rec)});
+  });
+  return rows;
+}
+function vConfirm(e){
+  const depts = manageDepts(e);
+  if(!depts.includes(S.cDept)) S.cDept = depts[0];
+  const dept = S.cDept, date = S.cDate, td = todayStr();
+  const rows = confirmRows(dept, date);
+  const c = {done:0,ng:0,late:0,miss:0,pending:0,open:0};
+  rows.forEach(r=>{ if(r.rec) c.done++; if(r.st==="ng"){ c.ng++; if(!r.rec.close) c.open++; } if(r.late) c.late++; if(r.st==="miss") c.miss++; if(r.st==="pending") c.pending++; });
+  const unass = deptSlots(dept).length - rows.length;
+  const appr = S.appr[date+"_"+dept];
+  let h = `<div class="dhead"><h2>${t("cTitle")}<small>${t("cSub")}</small></h2>
+    <div class="datenav"><button class="nbtn" data-act="cDay" data-v="-1" aria-label="Ngày trước">${ico("back")}</button><b>${date===td?t("today")+" ":WD[LANG][wdOf(date)]+" "}${shortDate(date)}</b><button class="nbtn" data-act="cDay" data-v="1" aria-label="Ngày sau" ${date>=td?"disabled":""}>${ico("next")}</button></div></div>`;
+  if(depts.length>1) h += `<div class="mchips" style="margin-bottom:12px">`+depts.map(d=>`<button class="mchip" aria-pressed="${d===dept}" data-act="cDept" data-v="${d}">${esc(L(DEPTS[d]))}</button>`).join("")+`</div>`;
+  h += `<div class="week">`;
+  for(let k=6;k>=0;k--){
+    const d = shiftDate(td,-k), ok = !!S.apprWeek[d+"_"+dept] || (d===date && !!appr);
+    h += `<button class="wday" aria-pressed="${d===date}" data-act="cPick" data-v="${d}"><small>${WD[LANG][wdOf(d)]}</small><b>${shortDate(d)}</b><span class="wcnt ${ok?"full":""}">${ok?"✓ "+t("approved"):"—"}</span></button>`;
+  }
+  h += `</div>`;
+  h += `<div class="card" style="margin-bottom:14px"><div class="cstats">
+      <div><b>${rows.length}</b><span>${t("stAssigned")}</span></div>
+      <div><b>${c.done}</b><span>${t("stDone")}</span></div>
+      <div><b style="${c.ng?"color:var(--bad)":""}">${c.ng}</b><span>${t("stNG")}${c.open?` · ${c.open} ${t("openNG").toLowerCase()}`:""}</span></div>
+      <div><b style="${c.late?"color:var(--warn)":""}">${c.late}</b><span>${t("stLate")}</span></div>
+      <div><b style="${c.miss?"color:var(--warn)":""}">${c.miss}</b><span>${t("stMiss")}</span></div>
+      <div><b>${c.pending}</b><span>${t("stPending")}</span></div></div>
+    ${unass?`<p class="muted" style="margin:10px 0 0;font-size:13.5px">${fill(t("unassignedN"),{n:unass})}</p>`:""}
+    <div class="actions" style="margin-top:14px">`;
+  if(appr){
+    h += `<span class="badge b-ok" style="font-size:14.5px;padding:9px 14px">${ico("check")}${t("approved")} ${t("by")} ${esc(appr.name)} · ${esc(appr.time)}</span>
+      ${S.appr[date+"_FINAL"]?`<span class="badge b-ok" style="font-size:14.5px;padding:9px 14px">${ico("lock")}${t("finalDone")} · ${esc(S.appr[date+"_FINAL"].name)}</span>`:""}
+      ${(!S.appr[date+"_FINAL"] && (appr.by===e.id||isAD(e)))?`<button class="ghost" data-act="cReopen">${ico("upload")}${t("reopen")}</button>`:""}`;
+  } else {
+    const left = c.miss + c.pending;
+    h += `<button class="primary" style="min-height:52px;font-size:16.5px" data-act="cApprove">${ico("check")}${S.cArm&&left?fill(t("confirmForce"),{n:left}):t("confirmDay")+" "+shortDate(date)}</button>`;
+  }
+  h += `</div></div>`;
+  if(!rows.length) return h+`<div class="empty">${t("noPeople")}</div>`;
+  h += `<div class="card"><div class="tbl-wrap"><table class="ptable crow"><thead><tr><th>${t("formF")}</th><th>${t("machine")}</th><th>${t("slot")}</th><th>${t("who")}</th><th>${t("result")}</th><th>${t("stNG")}</th></tr></thead><tbody>`;
+  rows.sort((a,b)=>(FORM_ORDER.indexOf(a.f)-FORM_ORDER.indexOf(b.f))||a.m.localeCompare(b.m)||a.i-b.i).forEach(r=>{
+    const who = emp(r.who);
+    h += `<tr ${r.rec?`data-act="detail" data-id="${esc(r.rec.id)}" style="cursor:pointer"`:""}><td>${formIcon(r.f,26)}</td><td><b>${esc(L(MC(r.m)))}</b></td><td class="muted">${esc(slotLabel(r.f,r.i))} · ${FM(r.f).slots[r.i].t}</td>
+      <td>${who?`<span class="who">${avatar(who)}${esc(who.name)}</span>`:"—"}</td><td><span style="display:flex;gap:6px;flex-wrap:wrap">${stateBadge(r,r.rec)}</span></td>
+      <td>${r.st==="ng"?(r.rec.close?`<span class="badge b-ok">${ico("check")}${t("closed")}</span>`:`<span class="badge b-bad">${t("openNG")}</span>`):""}</td></tr>`;
+  });
+  return h+`</tbody></table></div></div>`;
+}
+const canClose = (e,r) => e && ["TT","QL","AD"].includes(e.role) && (isAD(e) || e.dept==="QL" || deptOfForm(r.form)===e.dept);
+/* ---------- dashboard ---------- */
+const ymOf = d => d.slice(0,7);
+const monthStart = ym => ym+"-01";
+const monthEnd = ym => { const [y,m]=ym.split("-").map(Number); return ymd(new Date(y,m,0)); };
+const addMonths = (ym,n) => { const [y,m]=ym.split("-").map(Number); const d=new Date(y,m-1+n,1); return d.getFullYear()+"-"+pad(d.getMonth()+1); };
+const monthsLen = (a,b) => { const [y1,m1]=a.split("-").map(Number), [y2,m2]=b.split("-").map(Number); return (y2-y1)*12+(m2-m1)+1; };
+const datesBetween = (a,b) => { const out=[]; for(let d=a; d<=b; d=shiftDate(d,1)) out.push(d); return out; };
+const showYm = ym => { const [y,m]=ym.split("-"); return (LANG==="jp"?`${y}年${+m}月`:`Tháng ${m}/${y}`); };
+async function rangeMonths(col, fromYm, toYm){
+  let out=[];
+  for(let ym=fromYm; ym<=toYm; ym=addMonths(ym,1)) out = out.concat(await store.range(col, monthStart(ym), monthEnd(ym)));
+  return out;
+}
+function dashForms(e){ const fs = scopeForms(e); return S.dForm==="all" || !fs.includes(S.dForm) ? fs : [S.dForm]; }
+function prevRange(){ const n=monthsLen(S.dFrom,S.dTo); return [addMonths(S.dFrom,-n), addMonths(S.dFrom,-1)]; }
+async function loadDash(){
+  const key = S.dFrom+"_"+S.dTo; S.dKey = key; S.dLoading = true; render();
+  try{
+    const [pf] = prevRange();
+    const [rows, assigns] = await Promise.all([rangeMonths("checks", pf, S.dTo), rangeMonths("assign", pf, S.dTo)]);
+    if(S.dKey!==key) return;
+    S.dData = {rows, assigns};
+  }catch(err){ toastErr(t("saveErr")); }
+  S.dLoading = false; refresh();
+}
+function collect(from, to, forms){
+  const D = S.dData; if(!D) return {slots:[], unassigned:0};
+  const end = to < todayStr() ? to : todayStr();
+  const recBy = {}; let first = "9999";
+  D.rows.forEach(r=>{ if(r.date>=from && r.date<=end && forms.includes(r.form) && FM(r.form)){ recBy[r.id]=r; if(r.date<first) first=r.date; } });
+  const amap = {};
+  D.assigns.forEach(a=>{ if(a.date>=from && a.date<=end){ Object.entries(a.map||{}).forEach(([k,v])=>{ if(forms.includes(k.split("|")[0])){ amap[a.date+"|"+k]=v; if(a.date<first) first=a.date; } }); } });
+  const slots = []; let unassigned = 0;
+  if(first==="9999") return {slots, unassigned};
+  datesBetween(first>from?first:from, end).forEach(d=>forms.forEach(f=>activeMachines(f).forEach(m=>FM(f).slots.forEach((s,i)=>{
+    const who = amap[d+"|"+aKey(f,m,i)]||"", rec = recBy[recId(d,f,m,i)];
+    if(!who && !rec){ unassigned++; return; }
+    slots.push({date:d,f,m,i,assignee:who,who:rec?rec.worker:who,rec,...outcome(d,f,i,rec)});
+  }))));
+  return {slots, unassigned};
+}
+function applyFilt(slots){
+  const F = S.dFilt; if(!F) return slots;
+  return slots.filter(x=>{
+    if(F.t==="mach") return x.f+"|"+x.m===F.v;
+    if(F.t==="emp") return x.who===F.v;
+    if(F.t==="day") return x.date===F.v;
+    if(F.t==="prod") return x.rec && (x.rec.product||"—")===F.v;
+    if(F.t==="item"){ const [f,c]=F.v.split("|"); return x.f===f && x.rec && x.rec.status==="run" && itemIsX(FM(f), x.rec.items?.[c]); }
+    if(F.t==="err") return x.rec && ((x.rec.loai2||[]).some(l=>l.err===F.v) || Object.values(x.rec.items||{}).some(v=>(v.chips||[]).includes(F.v)));
+    return true;
+  });
+}
+function stats(slots){
+  const s = {due:0,onTime:0,checks:0,ng:0,late:0,miss:0,l2:0,open:0};
+  slots.forEach(x=>{
+    if(x.st!=="pending" && x.assignee) s.due++;
+    if(x.rec){ s.checks++; if(!x.late && x.assignee) s.onTime++; if(x.late) s.late++;
+      if(x.st==="ng"){ s.ng++; if(!x.rec.close) s.open++; }
+      (x.rec.loai2||[]).forEach(l=>s.l2+=l.doi); }
+    if(x.st==="miss") s.miss++;
+  });
+  s.comp = s.due ? s.onTime/s.due : null;
+  s.ngRate = s.checks ? s.ng/s.checks : null;
+  return s;
+}
+const fTag = (t_,v,label) => `data-act="filt" data-t="${t_}" data-v="${esc(v)}" data-l="${esc(label)}"`;
+const isF = (t_,v) => S.dFilt && S.dFilt.t===t_ && S.dFilt.v===v;
+function kpiCard(title, val, sub, cmp, color){
+  return `<div class="card kpi"><div class="kpi-t">${title}</div><div class="kpi-big" style="${color?"color:"+color:""}">${val}</div><div class="kpi-sub">${sub}</div><div class="kpi-cmp">${cmp}</div></div>`;
+}
+function cmpTxt(cur, prev, goodUp, fmt, hasPrev){
+  if(!hasPrev) return `<span class="muted">${t("noPrev")}</span>`;
+  if(cur==null || prev==null) return `<span class="muted">${t("prev")}: —</span>`;
+  const d = cur-prev;
+  if(Math.abs(d)<1e-9) return `<span class="delta d-flat">= ${t("prev")}</span>`;
+  const good = goodUp ? d>0 : d<0;
+  return `<span class="delta ${good?"d-good":"d-bad"}">${d>0?"▲":"▼"} ${fmt(Math.abs(d))}</span> <span class="muted">${t("prev")}: ${fmt(prev)}</span>`;
+}
+function hbar(rows, opts){
+  if(!rows.length) return `<p class="muted" style="margin:0">${t("noDataR")}</p>`;
+  const mx = Math.max(...rows.map(r=>r.v)) || 1;
+  return `<div class="hb">`+rows.map(r=>`<button class="hb-row ${isF(opts.t,r.key)?"on":""}" ${fTag(opts.t,r.key,r.label)} data-tip="${esc(r.tip||"")}">
+    <span class="hb-l">${r.pre||""}<span>${esc(r.label)}</span></span>
+    <span class="hb-bar"><i style="width:${(r.v/mx*100).toFixed(1)}%;background:${opts.color}"></i></span>
+    <span class="hb-v"><b>${r.vTxt??r.v}</b>${r.sub?`<small>${r.sub}</small>`:""}</span></button>`).join("")+`</div>`;
+}
+function dayChart(days, key, color, unit){
+  const W=560,H=150,L0=30,R0=6,T0=10,B0=22;
+  const vals = days.map(d=>d[key]); const mx = Math.max(1,...vals);
+  const step = mx<=4?1:mx<=10?2:mx<=20?5:mx<=50?10:mx<=100?20:mx<=250?50:Math.ceil(mx/500)*100;
+  const top = Math.ceil(mx/step)*step, y = v => T0+(H-T0-B0)*(1-v/top);
+  const bw = (W-L0-R0)/Math.max(1,days.length), bwid = Math.max(2,Math.min(18,bw*0.6));
+  const every = Math.max(1, Math.ceil(days.length/8));
+  const sel = S.dFilt && S.dFilt.t==="day" ? S.dFilt.v : null;
+  let g = "";
+  for(let v=0; v<=top; v+=step) g += `<line x1="${L0}" x2="${W-R0}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${L0-5}" y="${y(v)+4}" text-anchor="end">${v}</text>`;
+  days.forEach((d,i)=>{
+    const cx=L0+bw*i+bw/2, v=d[key], x0=cx-bwid/2, yy=y(v), rr=Math.min(3,(H-B0-yy),bwid/2);
+    if(v>0) g += `<path d="M${x0} ${H-B0} V${yy+rr} Q${x0} ${yy} ${x0+rr} ${yy} H${x0+bwid-rr} Q${x0+bwid} ${yy} ${x0+bwid} ${yy+rr} V${H-B0} Z" fill="${color}" opacity="${sel&&sel!==d.date?.35:1}"/>`;
+    g += `<rect x="${L0+bw*i}" y="${T0}" width="${bw}" height="${H-T0-B0}" fill="transparent" style="cursor:pointer" ${fTag("day",d.date,showDate(d.date))} data-tip="${esc(showDate(d.date)+"\n"+v+" "+unit)}"/>`;
+    if(i%every===0) g += `<text x="${cx}" y="${H-6}" text-anchor="middle">${shortDate(d.date)}</text>`;
+  });
+  g += `<line x1="${L0}" x2="${W-R0}" y1="${H-B0}" y2="${H-B0}" stroke="var(--line)"/>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(unit)}">${g}</svg>`;
+}
+function heatmap(slots, from, to, forms){
+  const end = to<todayStr()?to:todayStr();
+  const days = datesBetween(from, end);
+  if(!days.length) return `<p class="muted" style="margin:0">${t("noDataR")}</p>`;
+  const idx = {}; slots.forEach(x=>idx[x.date+"|"+x.f+"|"+x.m+"|"+x.i]=x);
+  const rows = []; forms.forEach(f=>activeMachines(f).forEach(m=>rows.push({f,m})));
+  const LW=250, CW=18, RH=24, TH=34, W=Math.max(LW+days.length*CW+4, LW+120), H=TH+rows.length*RH;
+  const col = {ok:"var(--ok)",ng:"var(--bad)",late:"var(--warn)",miss:"url(#missPat)",stop:"var(--stop)",none:"var(--sunk)"};
+  const every = Math.max(1,Math.ceil(days.length/12));
+  let g = `<defs><pattern id="missPat" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="var(--warn-bg)"/><rect width="2" height="4" fill="var(--warn)"/></pattern></defs>`;
+  days.forEach((d,j)=>{
+    const dd = +d.slice(8,10), x = LW+j*CW+CW/2, sun = wdOf(d)===0;
+    if(j===0 || dd===1) g += `<text x="${LW+j*CW+1}" y="11" style="fill:var(--ink);font-weight:700">${LANG==="jp"?(+d.slice(5,7))+"月":"Tháng "+(+d.slice(5,7))}</text>`;
+    g += `<text x="${x}" y="27" text-anchor="middle" ${d===todayStr()?'style="fill:var(--ink);font-weight:700"':sun?'style="opacity:.55"':""}>${dd}</text>`;
+  });
+  rows.forEach((r,k)=>{
+    const y0 = TH+k*RH, ns = FM(r.f).slots.length;
+    const mn = L(MC(r.m)), fn = L(FM(r.f)), fshow = fn===mn ? "" : (fn.length>24 ? fn.slice(0,23)+"…" : fn);
+    g += `<text x="0" y="${y0+RH/2+4}"><tspan style="fill:var(--ink);font-weight:700;font-size:12px">${esc(mn)}</tspan>${fshow?`<tspan dx="6">${esc(fshow)}</tspan>`:""}</text>`;
+    days.forEach((d,j)=>{
+      const x0 = LW+j*CW, ch = (RH-6)/ns;
+      for(let i=0;i<ns;i++){
+        const x = idx[d+"|"+r.f+"|"+r.m+"|"+i];
+        const key = !x ? "none" : x.st==="ng" ? "ng" : x.late ? "late" : x.st==="pending" ? "none" : x.st;
+        const tipTxt = `${showDate(d)} · ${L(MC(r.m))} · ${slotLabel(r.f,i)}\n${!x?t("legNone"):x.st==="pending"?t("stPending"):({ok:t("stOK"),ng:t("stNG"),miss:t("stMiss"),stop:t("stStop")}[x.st])+(x.late?" · "+t("stLate"):"")}${x&&x.who?"\n"+(emp(x.who)?.name||x.who):""}`;
+        g += `<rect x="${x0+1}" y="${y0+2+i*ch}" width="${CW-3}" height="${ch-1.5}" rx="2" fill="${col[key]}" ${x&&x.rec?`data-act="detail" data-id="${esc(x.rec.id)}" style="cursor:pointer"`:""} data-tip="${esc(tipTxt)}"/>`;
+      }
+    });
+  });
+  return `<div class="tbl-wrap"><svg class="heat" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("heat"))}">${g}</svg></div>`;
+}
+function vDash(e){
+  const scope = scopeForms(e), forms = dashForms(e);
+  const td = todayStr(), thisM = ymOf(td);
+  let h = `<div class="dhead"><h2>${t("dTitle")}<small>${t("dSub")} · ${scope.length===FORM_ORDER.length?t("scopeAll"):esc(L(DEPTS[e.dept]))}</small></h2></div>`;
+  /* bộ lọc */
+  const preset = S.dFrom===thisM&&S.dTo===thisM ? "this" : S.dFrom===addMonths(thisM,-2)&&S.dTo===thisM ? "3" : S.dFrom===thisM.slice(0,4)+"-01"&&S.dTo===thisM ? "ytd" : "";
+  h += `<div class="card dfil"><div class="dfil-row">
+      <label class="fld"><span>${t("fromM")}</span><input type="month" id="dFrom" value="${S.dFrom}" max="${thisM}"></label>
+      <label class="fld"><span>${t("toM")}</span><input type="month" id="dTo" value="${S.dTo}" max="${thisM}"></label>
+      <div class="mchips"><button class="mchip" aria-pressed="${preset==="this"}" data-act="dPreset" data-v="this">${t("pThis")}</button><button class="mchip" aria-pressed="${preset==="3"}" data-act="dPreset" data-v="3">${t("p3")}</button><button class="mchip" aria-pressed="${preset==="ytd"}" data-act="dPreset" data-v="ytd">${t("pYtd")}</button></div>
+      <span style="flex:1"></span><button class="ghost" data-act="dRefresh">${ico("trend")}${t("refresh")}</button><button class="ghost" data-act="export">${ico("download")}CSV</button></div>
+    ${scope.length>1?`<div class="label" style="margin:14px 2px 8px">${t("formF")}</div><div class="mchips"><button class="mchip" aria-pressed="${S.dForm==="all"}" data-act="dForm" data-v="all">${t("allForms")}</button>`+scope.map(f=>`<button class="mchip" aria-pressed="${S.dForm===f}" data-act="dForm" data-v="${f}">${esc(L(FM(f)))}</button>`).join("")+`</div>`:""}
+    <div class="dfil-foot">${S.dFilt?`<button class="fchip" data-act="filtClear">${ico("x")}${t("filtering")}: <b>${esc(S.dFilt.l)}</b></button>`:`<span class="muted" style="font-size:13.5px">${t("filterHint")}</span>`}</div></div>`;
+  if(!S.dData){ return h+`<div class="empty" style="margin-top:14px">${S.dLoading?"…":t("noDataR")}</div>`; }
+  const from = monthStart(S.dFrom), to = monthEnd(S.dTo);
+  const cur = collect(from, to, forms), slots = applyFilt(cur.slots), st = stats(slots);
+  const [pf,pt] = prevRange(); const pv = collect(monthStart(pf), monthEnd(pt), forms), ps = stats(applyFilt(pv.slots));
+  const hasPrev = pv.slots.length>0;
+  const pct = v => v==null?"—":Math.round(v*100)+"%";
+  /* KPI */
+  h += `<div class="kpis5">
+    ${kpiCard(t("kComp"), pct(st.comp), fill(t("kCompSub"),{a:st.onTime,b:st.due})+(cur.unassigned&&!S.dFilt?`<br>${fill(t("unassignedN"),{n:cur.unassigned})}`:""), cmpTxt(st.comp,ps.comp,true,v=>Math.round(v*100)+"%",hasPrev), st.comp==null?"":st.comp>=.95?"var(--ok)":st.comp>=.8?"var(--warn)":"var(--bad)")}
+    ${kpiCard(t("kNG"), st.ng, fill(t("kNGSub"),{n:st.checks})+(st.ngRate!=null?` · ${(st.ngRate*100).toFixed(1)}%`:""), cmpTxt(st.ng,ps.ng,false,v=>v,hasPrev), st.ng?"var(--bad)":"")}
+    ${kpiCard(t("kL2b"), st.l2.toLocaleString("vi-VN"), t("kL2Sub"), cmpTxt(st.l2,ps.l2,false,v=>v.toLocaleString("vi-VN"),hasPrev), "")}
+    ${kpiCard(t("kLM"), st.late+st.miss, fill(t("kLMSub"),{a:st.late,b:st.miss}), cmpTxt(st.late+st.miss,ps.late+ps.miss,false,v=>v,hasPrev), st.late+st.miss?"var(--warn)":"")}
+    ${kpiCard(t("kOpen"), st.open, t("kOpenSub"), "", st.open?"var(--bad)":"var(--ok)")}</div>`;
+  h += `<div class="dgrid" style="margin-top:14px">`;
+  /* Pareto loại lỗi */
+  const errAgg = {}; slots.forEach(x=>x.rec&&(x.rec.loai2||[]).forEach(l=>errAgg[l.err]=(errAgg[l.err]||0)+l.doi));
+  const errTot = Object.values(errAgg).reduce((a,b)=>a+b,0); let cum=0;
+  const errRows = Object.keys(errAgg).sort((a,b)=>errAgg[b]-errAgg[a]).map(k=>{ cum+=errAgg[k]; const nm=L(S.master.errors.find(x=>x.id===k))||k;
+    return {key:k,label:nm,v:errAgg[k],vTxt:errAgg[k].toLocaleString("vi-VN"),sub:Math.round(cum/errTot*100)+"%",tip:`${nm}\n${errAgg[k]} ${t("pair")} · ${Math.round(errAgg[k]/errTot*100)}%\n${t("cumul")} ${Math.round(cum/errTot*100)}%`}; });
+  h += `<div class="card span6"><h3>${ico("bug")}${t("pErr")}<span class="sub">${errTot.toLocaleString("vi-VN")} ${t("pair")}</span></h3><p class="csub">${t("pErrSub")}</p>${hbar(errRows,{t:"err",color:"var(--accent)"})}</div>`;
+  /* hạng mục NG */
+  const itAgg = {}; slots.forEach(x=>{ if(!x.rec||x.rec.status!=="run") return; const F=FM(x.f); Object.entries(x.rec.items||{}).forEach(([c,v])=>{ if(itemIsX(F,v)){ const k=x.f+"|"+c; itAgg[k]=(itAgg[k]||0)+1; } }); });
+  const itRows = Object.keys(itAgg).sort((a,b)=>itAgg[b]-itAgg[a]).slice(0,10).map(k=>{ const [f,c]=k.split("|"); const it=FM(f).items.find(i=>i.c===c);
+    return {key:k,label:L(it)||c,pre:formIcon(f,22),v:itAgg[k],vTxt:itAgg[k]+" "+t("times"),tip:`${L(it)} · ${L(FM(f))}\n${itAgg[k]} ${t("times")} NG`}; });
+  h += `<div class="card span6"><h3>${ico("alert")}${t("pItem")}<span class="sub">${st.ng} ${t("times")}</span></h3>${hbar(itRows,{t:"item",color:"var(--bad)"})}</div>`;
+  /* máy */
+  const mAgg = {}; slots.forEach(x=>{ if(!x.rec) return; const k=x.f+"|"+x.m; const a=mAgg[k]||={c:0,ng:0,l2:0}; a.c++; if(x.st==="ng") a.ng++; (x.rec.loai2||[]).forEach(l=>a.l2+=l.doi); });
+  const mRows = Object.keys(mAgg).filter(k=>mAgg[k].ng||mAgg[k].l2).sort((a,b)=>(mAgg[b].ng/mAgg[b].c)-(mAgg[a].ng/mAgg[a].c)||mAgg[b].l2-mAgg[a].l2).slice(0,10).map(k=>{ const [f,m]=k.split("|"), a=mAgg[k];
+    return {key:k,label:L(MC(m)),pre:formIcon(f,22),v:a.ng/a.c,vTxt:Math.round(a.ng/a.c*100)+"%",sub:`${a.ng}/${a.c} ${t("times")}${a.l2?" · "+a.l2+" "+t("pair"):""}`,tip:`${L(MC(m))} · ${L(FM(f))}\nNG ${a.ng}/${a.c}\n${t("l2")}: ${a.l2} ${t("pair")}`}; });
+  h += `<div class="card span6"><h3>${ico("factory")}${t("pMach")}</h3><p class="csub">${t("pMachSub")}</p>${hbar(mRows,{t:"mach",color:"var(--bad)"})}</div>`;
+  /* theo ngày */
+  const dAgg = {}; datesBetween(from, to<td?to:td).forEach(d=>dAgg[d]={date:d,l2:0,ng:0});
+  slots.forEach(x=>{ if(!x.rec||!dAgg[x.date]) return; if(x.st==="ng") dAgg[x.date].ng++; (x.rec.loai2||[]).forEach(l=>dAgg[x.date].l2+=l.doi); });
+  const dArr = Object.values(dAgg);
+  h += `<div class="card span6"><h3>${ico("trend")}${t("pDay")}</h3><div class="mini-h">${t("pDayL2")}</div>${dayChart(dArr,"l2","var(--accent)",t("pair"))}<div class="mini-h">${t("pDayNG")}</div>${dayChart(dArr,"ng","var(--bad)",t("times")+" NG")}</div>`;
+  /* mã hàng */
+  const pAgg = {}; slots.forEach(x=>{ if(!x.rec||!x.rec.product) return; const k=x.rec.product; const a=pAgg[k]||={c:0,ng:0,l2:0}; a.c++; if(x.st==="ng") a.ng++; (x.rec.loai2||[]).forEach(l=>a.l2+=l.doi); });
+  const pRows = Object.keys(pAgg).filter(k=>pAgg[k].ng||pAgg[k].l2).sort((a,b)=>pAgg[b].l2-pAgg[a].l2||pAgg[b].ng-pAgg[a].ng).slice(0,10).map(k=>{ const a=pAgg[k];
+    return {key:k,label:k,v:a.l2||a.ng,vTxt:a.l2+" "+t("pair"),sub:`NG ${a.ng}/${a.c}`,tip:`${k}\n${t("l2")}: ${a.l2} ${t("pair")}\nNG ${a.ng}/${a.c} ${t("times")}`}; });
+  h += `<div class="card span6"><h3>${ico("box")}${t("pProd")}</h3>${hbar(pRows,{t:"prod",color:"var(--warn)"})}</div>`;
+  /* NG gần đây */
+  const recent = slots.filter(x=>x.st==="ng").sort((a,b)=>(b.date+b.rec.time).localeCompare(a.date+a.rec.time)).slice(0,8);
+  h += `<div class="card span6"><h3>${ico("alert")}${t("recent")}<span class="sub">${st.open?`<span class="badge b-bad">${st.open} ${t("openNG").toLowerCase()}</span>`:""}</span></h3><div class="feed">`;
+  if(!recent.length) h += `<p class="muted" style="margin:0">${t("noIssue")}</p>`;
+  recent.forEach(x=>{ const F=FM(x.f); const bad=F.items.filter(it=>itemIsX(F,x.rec.items?.[it.c])).map(it=>L(it)).join(", ");
+    h += `<button class="issue" data-act="detail" data-id="${esc(x.rec.id)}"><span class="dot">${ico("alert")}</span><b>${esc(bad||t("stNG"))} · ${esc(L(MC(x.m)))}</b>
+      <span>${x.rec.close?`<span class="badge b-ok">${ico("check")}${t("closed")}</span> <span class="muted" style="font-size:13px">${esc(x.rec.close.note)}</span>`:`<span class="badge b-bad">${t("openNG")}</span>`}</span>
+      <span class="meta">${showDate(x.date)} · ${esc(slotLabel(x.f,x.i))} · ${esc(x.rec.workerName)}${x.rec.product?" · "+esc(x.rec.product):""}</span></button>`; });
+  h += `</div></div>`;
+  /* lịch tuân thủ */
+  h += `<div class="card span12"><h3>${ico("cal")}${t("heat")}<span class="sub"><span class="legend"><span><i style="background:var(--ok)"></i>${t("stOK")}</span><span><i style="background:var(--bad)"></i>${t("stNG")}</span><span><i style="background:var(--warn)"></i>${t("stLate")}</span><span><i style="background:repeating-linear-gradient(45deg,var(--warn) 0 2px,var(--warn-bg) 2px 4px)"></i>${t("stMiss")}</span><span><i style="background:var(--stop)"></i>${t("stStop")}</span><span><i style="background:var(--sunk)"></i>${t("legNone")}</span></span></span></h3><p class="csub">${t("heatSub")}</p>${heatmap(slots, from, to, forms)}</div>`;
+  /* nhân viên */
+  const per = {}; slots.forEach(x=>{ if(!x.who) return; const p=per[x.who]||={due:0,done:0,on:0,late:0,miss:0,ng:0};
+    if(x.st!=="pending") p.due++; if(x.rec){ p.done++; if(!x.late) p.on++; if(x.late) p.late++; if(x.st==="ng") p.ng++; } if(x.st==="miss") p.miss++; });
+  const ids = Object.keys(per).sort((a,b)=>(per[b].miss+per[b].late)-(per[a].miss+per[a].late)||(emp(a)?.name||"").localeCompare(emp(b)?.name||""));
+  h += `<div class="card span12"><h3>${ico("users")}${t("pPeople")}<span class="sub">${t("pPeopleSub")}</span></h3>`;
+  if(!ids.length) h += `<p class="muted" style="margin:0">${t("noDataR")}</p>`;
+  else h += `<div class="tbl-wrap"><table class="ptable"><thead><tr><th>${t("name")}</th><th>${t("dept")}</th><th class="num">${t("stAssigned")}</th><th class="num">${t("stDone")}</th><th class="num">${t("onTime")}</th><th style="min-width:110px"></th><th class="num">${t("stLate")}</th><th class="num">${t("stMiss")}</th><th class="num">${t("stNG")}</th></tr></thead><tbody>`+
+    ids.map(id=>{ const p=per[id], x=emp(id)||{name:id}, r=p.due?p.on/p.due:null;
+      return `<tr class="${isF("emp",id)?"on":""}" ${fTag("emp",id,x.name)} style="cursor:pointer"><td><span class="who">${avatar(x)}${esc(x.name)}</span></td><td class="muted">${esc(L(DEPTS[x.dept])||"")}</td><td class="num">${p.due}</td><td class="num">${p.done}</td>
+        <td class="num"><b style="color:${r==null?"inherit":r>=.95?"var(--ok)":r>=.8?"var(--warn)":"var(--bad)"}">${pct(r)}</b></td><td><div class="mini"><i style="width:${r==null?0:r*100}%"></i></div></td>
+        <td class="num" style="${p.late?"color:var(--warn);font-weight:700":""}">${p.late}</td><td class="num" style="${p.miss?"color:var(--warn);font-weight:700":""}">${p.miss}</td><td class="num" style="${p.ng?"color:var(--bad);font-weight:700":""}">${p.ng}</td></tr>`; }).join("")+`</tbody></table></div>`;
+  h += `</div></div>`;
+  return h;
+}
+/* ---------- quản trị danh mục ---------- */
+const CATS = [
+  {k:"employees",l:"cEmployees",i:"users"},{k:"products",l:"cProducts",i:"box"},{k:"errors",l:"cErrors",i:"bug"},
+  {k:"machines",l:"cMachines",i:"factory"},{k:"forms",l:"cForms",i:"doc"},{k:"settings",l:"cSettings",i:"gear"}];
+function vCat(){
+  const m = S.master;
+  let h = `<div class="adm"><nav class="adm-nav">`+CATS.map(c=>{
+    const n = Array.isArray(m[c.k]) ? m[c.k].filter(x=>x.active).length : c.k==="forms" ? FORM_ORDER.length : "";
+    return `<button aria-current="${S.cat===c.k}" data-act="cat" data-v="${c.k}">${ico(c.i)}${t(c.l)}<span>${n}</span></button>`;
+  }).join("")+`</nav><section class="card">`;
+  const c = CATS.find(x=>x.k===S.cat);
+  h += `<h3>${ico(c.i)}${t(c.l)}</h3>`;
+  if(S.cat==="forms") h += vCatForms();
+  else if(S.cat==="settings") h += vCatSettings();
+  else h += `<p class="muted" style="margin:-4px 0 12px;font-size:14px">${S.cat==="employees"?t("empHelp"):t("catHelp")}</p>${vAddBox()}
+      <div class="toolbar"><input id="catq" data-in="catq" placeholder="${esc(t("findCat"))}" value="${esc(S.catQ)}" autocomplete="off"></div>
+      <div class="tbl-wrap" id="catlist">${vCatList()}</div>`;
+  return h+`</section></div>`;
+}
+function vAddBox(){
+  const k = S.cat;
+  const sel = (id,obj,label) => `<label class="fld"><span>${label}</span><select id="${id}">`+Object.keys(obj).map(x=>`<option value="${x}">${esc(L(obj[x]))}</option>`).join("")+`</select></label>`;
+  let h = `<div class="addbox">`;
+  if(k==="products") h += `<label class="fld" style="flex:2"><span>${t("name")}</span><input id="a_name"></label><label class="fld" style="flex:2"><span>${t("aliases")}</span><input id="a_alias" placeholder="${esc(t("aliasPh"))}"></label>${sel("a_type",PTYPES,t("ptype"))}`;
+  if(k==="employees") h += `<label class="fld" style="max-width:150px"><span>${t("idOpt")}</span><input id="a_code" placeholder="NV022"></label><label class="fld" style="flex:2"><span>${t("name")}</span><input id="a_name"></label>${sel("a_dept",DEPTS,t("dept"))}${sel("a_role",ROLES,t("role"))}`;
+  if(k==="errors") h += `<label class="fld" style="flex:2"><span>${t("nameVi")}</span><input id="a_name"></label><label class="fld" style="flex:2"><span>${t("nameJp")}</span><input id="a_jp"></label>${sel("a_type",PTYPES,t("ptype"))}`;
+  if(k==="machines") h += `<label class="fld"><span>${t("code")}</span><input id="a_code" placeholder="CS4"></label><label class="fld" style="flex:2"><span>${t("nameVi")}</span><input id="a_name"></label><label class="fld" style="flex:2"><span>${t("nameJp")}</span><input id="a_jp"></label>`;
+  h += `<button class="primary" data-act="addCat">${ico("plus")}${t("addNew")}</button></div><div id="addmsg" class="warnline"></div>`;
+  return h;
+}
+function dupOf(k, name, selfIdx){
+  const n = norm(name); if(!n) return null;
+  return S.master[k].find((x,i)=> i!==selfIdx && norm(x.name||x.vi)===n);
+}
+function vCatList(){
+  const k = S.cat, q = norm(S.catQ), list = S.master[k];
+  const match = x => !q || norm([x.id,x.name,x.vi,x.jp,x.aliases].join(" ")).includes(q);
+  const sw = (i,on) => `<button class="sw" role="switch" aria-checked="${on}" aria-label="${t("active")}" data-act="toggleCat" data-i="${i}"></button>`;
+  const inp = (i,f,v,w) => `<input class="ed" data-edit="${f}" data-i="${i}" value="${esc(v)}" style="min-width:${w}px">`;
+  const sel = (i,f,obj,v) => `<select class="ed" data-edit="${f}" data-i="${i}">`+Object.keys(obj).map(x=>`<option value="${x}" ${x===v?"selected":""}>${esc(L(obj[x]))}</option>`).join("")+`</select>`;
+  let rows="";
+  list.forEach((x,i)=>{
+    if(!match(x)) return;
+    const cls = x.active?"":"off";
+    if(k==="products") rows += `<tr class="${cls}"><td class="mono">${x.id}</td><td>${inp(i,"name",x.name,170)}</td><td>${inp(i,"aliases",x.aliases,170)}</td><td>${sel(i,"type",PTYPES,x.type)}</td><td>${sw(i,x.active)}</td></tr>`;
+    if(k==="employees"){
+      const has = S.authSet.has(x.id);
+      rows += `<tr class="${cls}"><td class="mono" style="font-weight:700;color:var(--ink)">${x.id}</td><td>${inp(i,"name",x.name,150)}</td><td>${sel(i,"dept",DEPTS,x.dept)}</td><td>${sel(i,"role",ROLES,x.role)}</td>
+        <td><span style="display:flex;gap:6px;align-items:center"><span class="badge ${has?"b-ok":"b-wait"}">${has?t("pwIsSet"):t("pwIsDefault")}</span>${has?`<button class="ghost" style="min-height:34px;padding:0 10px;font-size:13px" data-act="pwReset" data-id="${x.id}">${ico("key")}${t("pwReset")}</button>`:""}</span></td><td>${sw(i,x.active)}</td></tr>`;
+    }
+    if(k==="errors") rows += `<tr class="${cls}"><td class="mono">${x.id}</td><td>${inp(i,"vi",x.vi,150)}</td><td>${inp(i,"jp",x.jp,130)}</td><td>${sel(i,"type",PTYPES,x.type)}</td><td>${sw(i,x.active)}</td></tr>`;
+    if(k==="machines"){
+      const used = FORM_ORDER.filter(f=>FM(f).machines.includes(x.id)).map(f=>L(FM(f))).join(", ");
+      rows += `<tr class="${cls}"><td class="mono">${x.id}</td><td>${inp(i,"vi",x.vi,140)}</td><td>${inp(i,"jp",x.jp,110)}</td><td class="muted" style="font-size:13px;min-width:160px">${esc(used)||"—"}</td><td>${sw(i,x.active)}</td></tr>`;
+    }
+  });
+  const head = {products:[t("code"),t("name"),t("aliases"),t("ptype"),t("active")],employees:[t("empId"),t("name"),t("dept"),t("role"),t("pwCol"),t("active")],
+    errors:[t("code"),t("nameVi"),t("nameJp"),t("ptype"),t("active")],machines:[t("code"),t("nameVi"),t("nameJp"),t("usedBy"),t("active")]}[k];
+  return `<table class="cat"><thead><tr>${head.map(x=>`<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>${rows||`<tr><td colspan="6" class="muted">—</td></tr>`}</tbody></table>`;
+}
+function vCatForms(){
+  const f = S.formSel, F = FM(f);
+  let h = `<div class="mchips" style="margin-bottom:6px">`+FORM_ORDER.map(x=>`<button class="mchip" aria-pressed="${x===f}" data-act="formSel" data-v="${x}">${esc(L(FM(x)))}</button>`).join("")+`</div>`;
+  h += `<div class="label">${t("formMachines")}</div><div class="mchips">`+
+    S.master.machines.filter(m=>m.active).map(m=>`<button class="mchip" aria-pressed="${F.machines.includes(m.id)}" data-act="formMach" data-v="${m.id}">${esc(L(m))}</button>`).join("")+`</div>`;
+  h += `<div class="label">${t("formSlots")}</div><div class="mchips">`+F.slots.map((s,i)=>`<label class="fld" style="flex:none;min-width:130px"><span>${esc(slotLabel(f,i))}</span><input type="time" data-slot="${i}" value="${esc(s.t)}"></label>`).join("")+`</div>`;
+  h += `<div class="label">${t("formItems")}</div><div class="tbl-wrap"><table class="cat"><thead><tr><th>${t("nameVi")}</th><th>${t("nameJp")}</th>${F.pos?"":`<th>${t("hasMeas")}</th>`}<th>${t("active")}</th></tr></thead><tbody>`+
+    F.items.map((it,i)=>`<tr class="${it.active===false?"off":""}"><td><input class="ed" data-fitem="vi" data-i="${i}" value="${esc(it.vi)}" style="min-width:170px"></td><td><input class="ed" data-fitem="jp" data-i="${i}" value="${esc(it.jp)}" style="min-width:140px"></td>
+      ${F.pos?"":`<td><button class="sw" role="switch" aria-checked="${!!it.meas}" data-act="itemMeas" data-i="${i}" aria-label="${t("hasMeas")}"></button></td>`}
+      <td><button class="sw" role="switch" aria-checked="${it.active!==false}" data-act="itemToggle" data-i="${i}" aria-label="${t("active")}"></button></td></tr>`).join("")+`</tbody></table></div>
+    <div class="addbox" style="margin-top:12px"><label class="fld" style="flex:2"><span>${t("nameVi")}</span><input id="i_vi"></label><label class="fld" style="flex:2"><span>${t("nameJp")}</span><input id="i_jp"></label><button class="primary" data-act="addItem">${ico("plus")}${t("addNew")}</button></div>`;
+  return h;
+}
+function vCatSettings(){
+  return `<div class="stack" style="gap:18px">
+    <div class="setblock"><b>${t("backupTitle")}</b><p class="muted" style="margin:4px 0 10px;font-size:14px">${t("backupHelp")}</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="primary" data-act="backup">${ico("download")}${t("backup")}</button><button class="ghost" data-act="restore">${ico("upload")}${t("restore")}</button></div></div>
+    <div class="setblock"><b>${t("resetTitle")}</b><p class="muted" style="margin:4px 0 10px;font-size:14px">${t("resetHelp")}</p>
+      <button class="ghost danger" data-act="resetCat">${ico("trash")}${S.resetArm?t("resetConfirm"):t("resetCat")}</button></div></div>`;
+}
+
+/* ===================== THAO TÁC ===================== */
+function toast(msg){ const d=document.createElement("div"); d.className="toast"; d.innerHTML=ico("check")+esc(msg); document.body.appendChild(d); setTimeout(()=>d.remove(),1500); }
+function toastErr(msg){ const d=document.createElement("div"); d.className="toast"; d.style.background="var(--bad)"; d.innerHTML=ico("alert")+esc(msg); document.body.appendChild(d); setTimeout(()=>d.remove(),2600); }
+const busyEditing = () => { const a=document.activeElement; return a && a.matches && a.matches("input,select,textarea") && !a.closest(".sheet"); };
+function refresh(){ if(S.view==="main" && !busyEditing()) render(); }
+
+/* tải dữ liệu theo tab */
+function loadData(){
+  const e = meEmp(); if(!e) return;
+  store.stopAll(); S.recs = {}; S.assign = {}; S.appr = {};
+  if(S.tab==="sum"){ loadDash(); return; }
+  const date = S.tab==="assign" ? S.aDate : S.tab==="confirm" ? S.cDate : todayStr();
+  store.watchByDate("checks", date, m=>{ const o={}; Object.values(m).forEach(r=>o[r.id]=r); S.recs=o; refresh(); });
+  store.watchByDate("assign", date, m=>{ S.assign=m; refresh(); });
+  store.watchByDate("approvals", date, m=>{ S.appr=m; refresh(); });
+  if(S.tab==="assign"){ const ws=wkStart(S.aDate); store.range("assign", ws, shiftDate(ws,6)).then(rows=>{ S.aWeekDocs=Object.fromEntries(rows.map(r=>[r._id,r])); refresh(); }).catch(()=>{}); }
+  if(S.tab==="confirm"){ const td=todayStr(); store.range("approvals", shiftDate(td,-6), td).then(rows=>{ S.apprWeek=Object.fromEntries(rows.map(r=>[r._id,r])); refresh(); }).catch(()=>{}); }
+  if(S.tab==="input" && manageDepts(e).length){
+    const td=todayStr(), a=shiftDate(td,-6); S.rev=null;
+    Promise.all([store.range("checks",a,td), store.range("assign",a,td), store.range("approvals",a,td)]).then(([c,as,ap])=>{
+      const strip = r => { const {_id,...x}=r; return x; };
+      S.rev = {checks:Object.fromEntries(c.map(r=>[r.id,strip(r)])), assign:Object.fromEntries(as.map(r=>[r._id,strip(r)])), appr:Object.fromEntries(ap.map(r=>[r._id,strip(r)]))};
+      refresh();
+    }).catch(()=>{ S.rev={checks:{},assign:{},appr:{}}; refresh(); });
+  }
+  if(S.tab==="cat" && isAD(e)) store.listIds("auth").then(ids=>{ S.authSet=new Set(ids); refresh(); }).catch(()=>{});
+}
+function goMain(){ S.view="main"; S.draft=null; S.err=""; S.sheet=null; loadData(); render(); window.scrollTo(0,0); }
+function startSession(id, remember){
+  S.me=id;
+  try{ localStorage.setItem("qc_lastid", id); if(remember) localStorage.setItem("qc_session", JSON.stringify({id, exp:Date.now()+30*864e5})); else localStorage.removeItem("qc_session"); }catch(e){}
+  const e=meEmp(); S.tab = "input"; S.trendFor="";
+  if(e && isLead(e) && !manageDepts(e).length) S.tab = "sum";
+}
+function logout(){
+  S.me=null; S.sheet=null; S.view="login"; S.login.err=""; store.stopAll();
+  try{ localStorage.removeItem("qc_session"); }catch(e){}
+  render(); window.scrollTo(0,0);
+}
+function normId(s){
+  s = String(s||"").trim().toUpperCase().replace(/\s+/g,"");
+  if(/^\d+$/.test(s)) s = "NV"+s.padStart(3,"0");
+  return s;
+}
+async function doLogin(){
+  const lg = S.login;
+  const id = normId(document.getElementById("lid").value), pw = document.getElementById("lpw").value, rem = document.getElementById("lrem").checked;
+  lg.id = id;
+  if(Date.now() < lg.until){ lg.err=t("tooMany"); render(); return; }
+  const e = S.master.employees.find(x=>x.id.toUpperCase()===id);
+  let ok=false, forced=false;
+  if(e){
+    let auth=null; try{ auth = await store.getDoc("auth", e.id); }catch(err){}
+    if(auth && auth.hash){ ok = (await hashPw(pw, auth.salt)) === auth.hash; }
+    else { ok = pw===DEFAULT_PW; forced = ok; }
+  }
+  if(ok && !e.active){ lg.err=t("inactive"); render(); return; }
+  if(!ok){ lg.fails++; if(lg.fails>=5){ lg.until=Date.now()+30000; lg.fails=0; } lg.err=t("badLogin"); render(); document.getElementById("lpw")?.focus(); return; }
+  lg.err=""; lg.fails=0;
+  startSession(e.id, rem);
+  if(forced){ S.pwForced=true; S.view="pw"; S.err=""; render(); return; }
+  goMain();
+}
+async function doSetPw(){
+  const p1=document.getElementById("np1").value, p2=document.getElementById("np2").value;
+  if(p1.length<4){ S.err=t("pwShort"); render(); return; }
+  if(p1!==p2){ S.err=t("pwMismatch"); render(); return; }
+  if(p1===DEFAULT_PW){ S.err=t("pwDefault"); render(); return; }
+  const salt=newSalt(), hash=await hashPw(p1,salt), e=meEmp();
+  try{ await store.setDoc("auth", e.id, {hash, salt, at:new Date().toISOString()}); }catch(err){ S.err=t("saveErr"); render(); return; }
+  S.pwForced=false; S.err=""; toast(t("pwSaved")); goMain();
+}
+
+document.addEventListener("submit", ev=>{
+  ev.preventDefault();
+  if(ev.target.id==="loginForm") doLogin();
+  else if(ev.target.id==="pwForm") doSetPw();
+});
+
+async function saveMaster(m, msg){
+  try{ await store.saveMaster(m); S.master=mergeMaster(m); if(msg) toast(msg); render(); }
+  catch(e){ toastErr(t("saveErr")); render(); }
+}
+const nextId = (list,pre,w) => pre+String(list.reduce((mx,x)=>Math.max(mx,(String(x.id).startsWith(pre)?parseInt(String(x.id).slice(pre.length)):0)||0),0)+1).padStart(w,"0");
+
+const findRec = id => S.recs[id] || (S.dData && S.dData.rows.find(r=>r.id===id)) || null;
+function patchRec(rec){
+  if(S.recs[rec.id]) S.recs[rec.id]=rec;
+  if(S.dData){ const i=S.dData.rows.findIndex(r=>r.id===rec.id); if(i>=0) S.dData.rows[i]=rec; }
+}
+document.addEventListener("click", async ev=>{
+  const b = ev.target.closest("[data-act]");
+  if(!b) return;
+  if(b.classList.contains("scrim") && ev.target.closest("[data-stop]")) return;
+  const a = b.dataset.act, d = S.draft, e = meEmp();
+  switch(a){
+    case "lang": LANG = LANG==="vi"?"jp":"vi"; try{localStorage.setItem("qc_lang",LANG);}catch(x){} render(); break;
+    case "showpw": { const i=document.getElementById(b.dataset.for); i.type = i.type==="password"?"text":"password"; break; }
+    case "menu": S.sheet={type:"menu"}; renderSheet(); break;
+    case "changePw": S.sheet=null; S.pwForced=false; S.err=""; S.view="pw"; render(); break;
+    case "pwCancel": goMain(); break;
+    case "logout": logout(); break;
+    case "tab": S.tab=b.dataset.v; S.resetArm=false; S.clearArm=false; loadData(); render(); window.scrollTo(0,0); break;
+    case "aWeek": S.aDate=shiftDate(S.aDate,+b.dataset.v); if(S.aDate<todayStr() && shiftDate(S.aDate,6)>=todayStr()) S.aDate=todayStr(); S.clearArm=false; loadData(); render(); break;
+    case "aPick": S.aDate=b.dataset.v; S.clearArm=false; loadData(); render(); break;
+    case "aDept": S.aDept=b.dataset.v; S.clearArm=false; render(); break;
+    case "aQuick": {
+      const who=document.getElementById("q_"+b.dataset.f).value; const f=b.dataset.f, dept=S.aDept;
+      const map={...((S.assign[S.aDate+"_"+dept]||S.aWeekDocs[S.aDate+"_"+dept]||{}).map||{})};
+      activeMachines(f).forEach(m=>FM(f).slots.forEach((s,i)=>{ if(who) map[aKey(f,m,i)]=who; else delete map[aKey(f,m,i)]; }));
+      try{ await saveAssign(dept,map); toast(t("aSaved")); render(); }catch(err){ toastErr(t("saveErr")); } break; }
+    case "aCopyPrev": {
+      const prev = await store.getDoc("assign", shiftDate(S.aDate,-1)+"_"+S.aDept).catch(()=>null);
+      if(!prev || !prev.map || !Object.keys(prev.map).length){ toastErr(t("aNothing")); return; }
+      try{ await saveAssign(S.aDept, {...prev.map}); toast(t("aSaved")); render(); }catch(err){ toastErr(t("saveErr")); } break; }
+    case "aClear": if(!S.clearArm){ S.clearArm=true; render(); } else { S.clearArm=false; try{ await saveAssign(S.aDept,{}); toast(t("aSaved")); render(); }catch(err){ toastErr(t("saveErr")); } } break;
+    case "aCopyTo": S.sheet={type:"copy", sel:new Set()}; renderSheet(); break;
+    case "cpDay": { const d=b.dataset.v; S.sheet.sel.has(d)?S.sheet.sel.delete(d):S.sheet.sel.add(d); renderSheet(); break; }
+    case "cpPreset": { const ws=shiftDate(wkStart(S.aDate), b.dataset.v==="next"?7:0); S.sheet.sel=new Set(); for(let k=0;k<6;k++){ const d=shiftDate(ws,k); if(d>=todayStr() && d!==S.aDate) S.sheet.sel.add(d); } renderSheet(); break; }
+    case "cpApply": {
+      const map={...((S.assign[S.aDate+"_"+S.aDept]||S.aWeekDocs[S.aDate+"_"+S.aDept]||{}).map||{})}; const days=[...S.sheet.sel];
+      if(!days.length) return;
+      try{ for(const d of days) await saveAssign(S.aDept, {...map}, d); S.sheet=null; toast(fill(t("copied"),{n:days.length})); render(); }catch(err){ toastErr(t("saveErr")); } break; }
+    case "goConfirm": S.tab="confirm"; S.cDate=b.dataset.d; S.cDept=b.dataset.dept; S.cArm=false; loadData(); render(); window.scrollTo(0,0); break;
+    case "finalApprove": {
+      if(!isAD(e)) return; const d0=b.dataset.d, n=new Date();
+      const data={date:d0,dept:"FINAL",by:e.id,name:e.name,time:hm(n)+" "+shortDate(todayStr()),at:n.toISOString()};
+      try{ await store.setDoc("approvals", d0+"_FINAL", data); if(S.rev) S.rev.appr[d0+"_FINAL"]=data; toast(t("finalDone")); render(); }catch(err){ toastErr(t("saveErr")); }
+      break; }
+    case "finalUndo": {
+      if(!isAD(e)) return; const d0=b.dataset.d;
+      try{ await store.delDoc("approvals", d0+"_FINAL"); if(S.rev) delete S.rev.appr[d0+"_FINAL"]; toast(t("reopened")); render(); }catch(err){ toastErr(t("saveErr")); }
+      break; }
+    case "cDay": S.cDate=shiftDate(S.cDate,+b.dataset.v); S.cArm=false; loadData(); render(); break;
+    case "cPick": S.cDate=b.dataset.v; S.cArm=false; loadData(); render(); break;
+    case "cDept": S.cDept=b.dataset.v; S.cArm=false; render(); break;
+    case "cApprove": {
+      const rows=confirmRows(S.cDept,S.cDate); const left=rows.filter(r=>r.st==="miss"||r.st==="pending").length;
+      if(left && !S.cArm){ S.cArm=true; render(); return; }
+      S.cArm=false; const n=new Date();
+      const data={date:S.cDate,dept:S.cDept,by:e.id,name:e.name,time:hm(n)+" "+shortDate(todayStr()),at:n.toISOString(),done:rows.filter(r=>r.rec).length,total:rows.length};
+      try{ await store.setDoc("approvals", S.cDate+"_"+S.cDept, data); S.appr[S.cDate+"_"+S.cDept]=data; S.apprWeek[S.cDate+"_"+S.cDept]=data; toast(t("approved")); render(); }catch(err){ toastErr(t("saveErr")); }
+      break; }
+    case "cReopen": { if(S.appr[S.cDate+"_FINAL"]){ toastErr(t("finalLocked")); return; } try{ await store.delDoc("approvals", S.cDate+"_"+S.cDept); delete S.appr[S.cDate+"_"+S.cDept]; delete S.apprWeek[S.cDate+"_"+S.cDept]; toast(t("reopened")); render(); }catch(err){ toastErr(t("saveErr")); } break; }
+    case "closeNG": {
+      const r=findRec(b.dataset.id); const note=(document.getElementById("closeNote")?.value||"").trim();
+      if(!r) return; if(!note){ toastErr(t("closeNeed")); return; }
+      const n=new Date(); const rec={...r, close:{by:e.id,name:e.name,note,at:n.toISOString(),time:hm(n)+" "+shortDate(todayStr())}}; delete rec._id;
+      try{ await store.setDoc("checks", rec.id, rec); patchRec(rec); S.sheet={type:"detail",rec}; toast(t("closed")); render(); }catch(err){ toastErr(t("saveErr")); }
+      break; }
+    case "dPreset": { const m=todayStr().slice(0,7); S.dTo=m; S.dFrom = b.dataset.v==="this"?m : b.dataset.v==="3"?addMonths(m,-2) : m.slice(0,4)+"-01"; S.dFilt=null; loadDash(); break; }
+    case "dForm": S.dForm=b.dataset.v; S.dFilt=null; render(); break;
+    case "dRefresh": loadDash(); break;
+    case "filt": { const f={t:b.dataset.t,v:b.dataset.v,l:b.dataset.l}; S.dFilt = (S.dFilt&&S.dFilt.t===f.t&&S.dFilt.v===f.v) ? null : f; tip.hidden=true; render(); break; }
+    case "filtClear": S.dFilt=null; render(); break;
+    case "open": {
+      S.date=todayStr();
+      const f=b.dataset.f, m=b.dataset.m, s=+b.dataset.s, ex=S.recs[recId(S.date,f,m,s)];
+      if(assignedTo(f,m,s)!==e.id) return;
+      if(ex && ex.worker!==e.id){ S.sheet={type:"detail",rec:ex}; renderSheet(); toastErr(t("notMine")); return; }
+      if(S.appr[S.date+"_"+deptOfForm(f)]){ if(ex){ S.sheet={type:"detail",rec:ex}; renderSheet(); } toastErr(t("locked")); return; }
+      S.draft=newDraft(f,m,s); S.view="form"; S.err=""; render(); window.scrollTo(0,0); break; }
+    case "back": goMain(); break;
+    case "slot": { const keep=d.product; S.draft=newDraft(d.form,d.machine,+b.dataset.v); if(!S.draft.product) S.draft.product=keep; render(); break; }
+    case "status": d.status=b.dataset.v; S.err=""; render(); break;
+    case "okx": { const v=d.items[b.dataset.c]; v.r=b.dataset.v; if(v.r==="OK"){v.chips=[];v.note="";} S.err=""; render(); break; }
+    case "pos": { const v=d.items[b.dataset.c]; v.pos[b.dataset.p]= v.pos[b.dataset.p]==="OK"?"X":"OK"; if(!Object.values(v.pos).includes("X")){v.chips=[];v.note="";} S.err=""; render(); break; }
+    case "chip": { const v=d.items[b.dataset.c]; const id=b.dataset.v; v.chips = v.chips.includes(id)? v.chips.filter(x=>x!==id) : [...v.chips,id]; render(); break; }
+    case "pickProduct": S.sheet={type:"product",q:""}; renderSheet(); break;
+    case "setProduct": d.product=b.dataset.v; S.sheet=null; S.err=""; render(); break;
+    case "addL2": S.sheet={type:"l2",err:null,qty:1,unit:"doi"}; renderSheet(); break;
+    case "l2err": S.sheet.err=b.dataset.v; renderSheet(); break;
+    case "qty": S.sheet.qty=Math.max(1,(+S.sheet.qty||0)+(+b.dataset.v)); renderSheet(); break;
+    case "unit": S.sheet.unit=b.dataset.v; renderSheet(); break;
+    case "l2ok": { const q=Math.max(1,Math.round(+S.sheet.qty||0)); d.loai2.push({err:S.sheet.err,qty:q,unit:S.sheet.unit,doi:S.sheet.unit==="ta"?q*12:q}); S.sheet=null; render(); break; }
+    case "delL2": d.loai2.splice(+b.dataset.i,1); render(); break;
+    case "closeSheet": S.sheet=null; renderSheet(); break;
+    case "save": await doSave(); break;
+    case "detail": { const r=findRec(b.dataset.id); if(r){ tip.hidden=true; S.sheet={type:"detail",rec:r}; renderSheet(); } break; }
+    case "export": await doExport(); break;
+    /* quản trị */
+    case "cat": S.cat=b.dataset.v; S.catQ=""; S.resetArm=false; render(); break;
+    case "pwReset": { try{ await store.delDoc("auth", b.dataset.id); S.authSet.delete(b.dataset.id); toast(t("pwResetDone")); render(); }catch(err){ toastErr(t("saveErr")); } break; }
+    case "toggleCat": { const m=clone(S.master); const x=m[S.cat][+b.dataset.i]; x.active=!x.active;
+      if(S.cat==="employees" && x.role==="AD" && !m.employees.some(y=>y.role==="AD"&&y.active)){ toastErr(t("lastAdmin")); return; }
+      if(S.cat==="employees" && x.id===S.me && !x.active){ toastErr(t("lastAdmin")); return; }
+      await saveMaster(m); break; }
+    case "addCat": await addCat(); break;
+    case "formSel": S.formSel=b.dataset.v; render(); break;
+    case "formMach": { const m=clone(S.master); const F=m.forms[S.formSel]; const id=b.dataset.v;
+      F.machines = F.machines.includes(id) ? F.machines.filter(x=>x!==id) : [...F.machines,id]; await saveMaster(m); break; }
+    case "itemToggle": { const m=clone(S.master); const it=m.forms[S.formSel].items[+b.dataset.i]; it.active = it.active===false; await saveMaster(m); break; }
+    case "itemMeas": { const m=clone(S.master); const it=m.forms[S.formSel].items[+b.dataset.i]; it.meas=!it.meas; await saveMaster(m); break; }
+    case "addItem": {
+      const vi=(document.getElementById("i_vi").value||"").trim(); if(!vi) return;
+      const jp=(document.getElementById("i_jp").value||"").trim();
+      const m=clone(S.master); m.forms[S.formSel].items.push({c:"u"+Date.now().toString(36),vi,jp:jp||vi,active:true});
+      await saveMaster(m,t("saved")); break; }
+    case "backup": await doBackup(); break;
+    case "restore": document.getElementById("impfile").click(); break;
+    case "resetCat": if(!S.resetArm){ S.resetArm=true; render(); } else { S.resetArm=false; await saveMaster(clone(DEFAULT_MASTER),t("saved")); } break;
+  }
+});
+
+async function addCat(){
+  const k=S.cat, val=id=>(document.getElementById(id)?.value||"").trim();
+  const name=val("a_name"), msg=document.getElementById("addmsg");
+  if(!name){ msg.textContent=t("need"); return; }
+  const dup = k==="employees" ? null : dupOf(k,name,-1);
+  if(dup){ msg.textContent=`${t("dup")}: ${dup.id} · ${dup.name||dup.vi}`; return; }
+  const m=clone(S.master), list=m[k];
+  if(k==="products") list.push({id:nextId(list,"SP",3),name,aliases:val("a_alias"),type:val("a_type"),active:true});
+  if(k==="employees"){
+    let id = normId(val("a_code")).replace(/[^A-Z0-9_-]/g,"") || nextId(list,"NV",3);
+    if(list.some(x=>x.id.toUpperCase()===id)){ msg.textContent=`${t("idTaken")}: ${id}`; return; }
+    list.push({id,name,dept:val("a_dept"),role:val("a_role"),active:true});
+  }
+  if(k==="errors"){ const i=list.findIndex(x=>norm(x.vi)==="khac"); const row={id:nextId(list,"L",2),vi:name,jp:val("a_jp")||name,type:val("a_type"),active:true}; i>=0?list.splice(i,0,row):list.push(row); }
+  if(k==="machines"){ const code=val("a_code").toUpperCase().replace(/[^A-Z0-9]/g,""); if(!code){ msg.textContent=t("code")+"?"; return; }
+    if(list.some(x=>x.id===code)){ msg.textContent=`${t("dup")}: ${code}`; return; }
+    list.push({id:code,vi:name,jp:val("a_jp")||name,active:true}); }
+  await saveMaster(m,t("saved"));
+}
+
+document.addEventListener("change", async ev=>{
+  const el = ev.target;
+  if(el.id==="dFrom"||el.id==="dTo"){
+    if(!el.value) return;
+    if(el.id==="dFrom") S.dFrom=el.value; else S.dTo=el.value;
+    if(S.dFrom>S.dTo){ if(el.id==="dFrom") S.dTo=S.dFrom; else S.dFrom=S.dTo; }
+    S.dFilt=null; el.blur(); loadDash(); return;
+  }
+  if(el.dataset.assign){
+    const dept=S.aDept, map={...((S.assign[S.aDate+"_"+dept]||S.aWeekDocs[S.aDate+"_"+dept]||{}).map||{})};
+    if(el.value) map[el.dataset.assign]=el.value; else delete map[el.dataset.assign];
+    el.blur(); try{ await saveAssign(dept,map); toast(t("aSaved")); render(); }catch(err){ toastErr(t("saveErr")); }
+  } else if(el.dataset.edit){
+    const m=clone(S.master), x=m[S.cat][+el.dataset.i], f=el.dataset.edit, v=el.value.trim();
+    if((f==="name"||f==="vi") && !v){ el.value=x[f]; return; }
+    if((f==="name"||f==="vi") && S.cat!=="employees"){ const dup=dupOf(S.cat,v,+el.dataset.i); if(dup){ toastErr(`${t("dup")}: ${dup.id} · ${dup.name||dup.vi}`); el.value=x[f]; return; } }
+    if(S.cat==="employees" && f==="role" && x.role==="AD" && v!=="AD" && m.employees.filter(y=>y.role==="AD"&&y.active).length<2){ toastErr(t("lastAdmin")); el.value="AD"; return; }
+    x[f]=v; el.blur(); await saveMaster(m);
+  } else if(el.dataset.fitem){
+    const m=clone(S.master), it=m.forms[S.formSel].items[+el.dataset.i], v=el.value.trim();
+    if(!v && el.dataset.fitem==="vi"){ el.value=it.vi; return; }
+    it[el.dataset.fitem]=v; el.blur(); await saveMaster(m);
+  } else if(el.dataset.slot){
+    if(!el.value) return;
+    const m=clone(S.master); m.forms[S.formSel].slots[+el.dataset.slot].t=el.value; el.blur(); await saveMaster(m);
+  } else if(el.id==="impfile" && el.files[0]){
+    await doRestore(el.files[0]); el.value="";
+  }
+});
+
+document.addEventListener("input", ev=>{
+  const el = ev.target; const k = el.dataset && el.dataset.in; if(!k) return;
+  const d = S.draft;
+  if(k==="note") d.items[el.dataset.c].note = el.value;
+  else if(k==="meas") d.items[el.dataset.c].meas = el.value;
+  else if(k==="stopnote") d.stopNote = el.value;
+  else if(k==="qty") S.sheet.qty = el.value.replace(/\D/g,"");
+  else if(k==="psearch"){ S.sheet.q = el.value; document.getElementById("plist").innerHTML = productList(); }
+  else if(k==="catq"){ S.catQ = el.value; document.getElementById("catlist").innerHTML = vCatList(); }
+});
+
+/* tooltip cho biểu đồ và ô trạng thái */
+const tip = document.getElementById("tip");
+document.addEventListener("pointerover", ev=>{
+  const el = ev.target.closest && ev.target.closest("[data-tip]");
+  if(!el){ tip.hidden=true; return; }
+  tip.textContent = el.getAttribute("data-tip"); tip.hidden=false;
+  const r = el.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+  let x = r.left + r.width/2 - tw/2; x = Math.max(8, Math.min(window.innerWidth-tw-8, x));
+  let y = r.top - th - 8; if(y<8) y = r.bottom + 8;
+  tip.style.left = x+"px"; tip.style.top = y+"px";
+});
+document.addEventListener("scroll", ()=>{ tip.hidden=true; }, {passive:true});
+
+async function doSave(){
+  const d = S.draft, F = FM(d.form), e = meEmp();
+  S.err = "";
+  if(assignedTo(d.form,d.machine,d.slot)!==e.id){ S.err=t("notMine"); render(); return; }
+  const ex = S.recs[d.id];
+  if(ex && ex.worker!==e.id){ S.err=t("notMine"); render(); return; }
+  if(S.appr[d.date+"_"+deptOfForm(d.form)]){ S.err=t("locked"); render(); return; }
+  if(d.status==="run"){
+    if(F.product==="req" && !d.product){ S.err=t("needProduct"); render(); window.scrollTo(0,0); return; }
+    const bad = activeItems(d.form).find(it=>{ const v=d.items[it.c]; return itemIsX(F,v) && !v.chips.length && !v.note.trim(); });
+    if(bad){ S.err=t("needX"); render(); document.getElementById("it-"+bad.c)?.scrollIntoView({block:"center"}); return; }
+  }
+  const n = new Date();
+  Object.values(d.items).forEach(v=>{ if(!itemIsX(F,v)){ v.chips=[]; v.note=""; } });
+  const anyX = d.status==="run" && activeItems(d.form).some(it=>itemIsX(F,d.items[it.c]));
+  const rec = {...d, worker:e.id, workerName:e.name,
+    result: d.status!=="run" ? "STOP" : anyX ? "X" : "OK",
+    time: ex && d.time ? d.time : hm(n), savedAt:n.toISOString()};
+  if(ex) rec.editedAt = n.toISOString();
+  if(d.status!=="run") rec.loai2 = [];
+  try{ await store.setDoc("checks", rec.id, rec); }catch(err){ S.err=t("saveErr"); render(); return; }
+  S.recs[rec.id] = rec;
+  toast(t("saved"));
+  goMain();
+}
+
+const scopeRows = (rows,e) => { const fs=scopeForms(e); return rows.filter(r=>fs.includes(r.form)); };
+async function doExport(){
+  const ym = S.dFrom===S.dTo ? S.dFrom : S.dFrom+"_"+S.dTo;
+  const fs = dashForms(meEmp());
+  let rows; try{ rows = (await rangeMonths("checks", S.dFrom, S.dTo)).filter(r=>fs.includes(r.form)); }catch(e){ toastErr(t("saveErr")); return; }
+  rows.sort((a,b)=> (a.date+a.form+a.machine+a.slot) < (b.date+b.form+b.machine+b.slot) ? -1 : 1);
+  const out = [["Ngày","Phiếu","Máy","Lần","Giờ","Đúng giờ","Mã NV","Người kiểm","Mã hàng","Trạng thái máy","Hạng mục","Vị trí","Kết quả","Lỗi / Xử lý","Ghi chú","Số đo","Loại 2 (đôi)","Khép NG"]];
+  const st = {run:"Chạy",broken:"Hỏng",off:"Không SX"};
+  rows.forEach(r=>{
+    const F = FM(r.form); if(!F) return;
+    const base = [showDate(r.date),F.vi,MC(r.machine).vi,F.slots[r.slot]?.vi||("Lần "+(r.slot+1)),r.time,outcome(r.date,r.form,r.slot,r).late?"Trễ":"Đúng giờ",r.worker,r.workerName,r.product||"",st[r.status]||r.status];
+    const cl = r.close ? r.close.name+": "+r.close.note : (r.result==="X"?"Chưa":"");
+    if(r.status!=="run"){ out.push([...base,"","","","",r.stopNote||"","","",""]); return; }
+    F.items.filter(it=>r.items[it.c]).forEach(it=>{
+      const v = r.items[it.c];
+      const chips = (v.chips||[]).map(id=>((F.chips==="err"?S.master.errors:ACTS).find(c=>c.id===id)||{vi:id}).vi).join(", ");
+      if(F.pos) ["T","G","P"].forEach(p=>{ const x=v.pos?.[p]==="X"; out.push([...base,it.vi,POSN[p].vi,x?"X":"Đạt",x?chips:"",x?(v.note||""):"","","",x?cl:""]); });
+      else out.push([...base,it.vi,"",v.r==="X"?"X":"Đạt",chips,v.note||"",v.meas||"","",v.r==="X"?cl:""]);
+    });
+    (r.loai2||[]).forEach(x=>out.push([...base,"Loại 2","","",(S.master.errors.find(y=>y.id===x.err)||{vi:x.err}).vi,"","",x.doi,""]));
+  });
+  const csv = "﻿"+out.map(r=>r.map(c=>{ const s=String(c??""); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }).join(",")).join("\r\n");
+  await offerFile(`Kachiboshi_QC_${ym}.csv`, csv, "text/csv");
+}
+async function doBackup(){
+  try{
+    const strip = rows => Object.fromEntries(rows.map(r=>{ const {_id,...rest}=r; return [_id,rest]; }));
+    const all = ["0000-00-00","9999-99-99"];
+    const data = {app:"kachiboshi-qc",version:3,exportedAt:new Date().toISOString(),master:S.master,
+      checks:strip(await store.range("checks",...all)), assign:strip(await store.range("assign",...all)), approvals:strip(await store.range("approvals",...all))};
+    await offerFile(`Kachiboshi_QC_saoluu_${todayStr()}.json`, JSON.stringify(data,null,1), "application/json");
+  }catch(e){ toastErr(t("saveErr")); }
+}
+async function doRestore(file){
+  try{
+    const data = JSON.parse(await file.text());
+    if(!data || data.app!=="kachiboshi-qc") throw 0;
+    if(data.master){ const m=mergeMaster(data.master); await store.saveMaster(m); S.master=m; }
+    let n=0;
+    const toEntries = x => Array.isArray(x) ? x.map(r=>[r.id,r]) : Object.entries(x||{});
+    for(const [id,r] of toEntries(data.checks)){ if(id && r && r.date){ await store.setDoc("checks",id,r); n++; } }
+    for(const [id,r] of toEntries(data.assign)){ if(id && r && r.date) await store.setDoc("assign",id,r); }
+    for(const [id,r] of toEntries(data.approvals)){ if(id && r && r.date) await store.setDoc("approvals",id,r); }
+    toast(`${t("restored")} ${n} ${t("records")}`); S.trendFor=""; loadData(); render();
+  }catch(e){ toastErr(t("badFile")); }
+}
+
+/* ===================== KHỞI ĐỘNG ===================== */
+(async function start(){
+  try{ S.login.id = localStorage.getItem("qc_lastid") || ""; }catch(e){}
+  render();
+  await store.init();
+  let first = true;
+  store.watchMaster(m=>{
+    S.master = mergeMaster(m);
+    if(first){
+      first = false;
+      let sess=null; try{ sess=JSON.parse(localStorage.getItem("qc_session")); }catch(e){}
+      if(sess && sess.exp>Date.now() && emp(sess.id)?.active){ startSession(sess.id,true); goMain(); return; }
+    }
+    if(S.view!=="form" && !busyEditing()) render();
+  });
+})();
+</script>
+
+</body>
+</html>
